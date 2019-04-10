@@ -1,12 +1,13 @@
-package no.infoskjermen.infoskjermen;
+package no.infoskjermen;
 
-import no.infoskjermen.Settings;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
+@EnableCaching
 @RestController
 public class InfoskjermenApplication {
 
@@ -18,7 +19,8 @@ public class InfoskjermenApplication {
 	public String hello() {
 		Settings settings = new Settings();
 		try {
-			return settings.hentSettings();
+			//return settings.hentSettings();
+			return "hei";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error: " + e.getMessage();
@@ -28,6 +30,12 @@ public class InfoskjermenApplication {
 
 	@GetMapping("/kindle")
 	public String kindle() {
+		Settings settings = new Settings();
+		try {
+			return ""; //settings.hentSettings("fredrik");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "this is my kindle";
 	}
 }

@@ -1,4 +1,4 @@
-package no.infoskjermen.infoskjermen;
+package no.infoskjermen;
 
 
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class InfoskjermenApplicationTests {
 		System.out.println("ferdig");
 
 		assertThat(this.infoskjerm.hello())
-				.isEqualTo("dette funker!");
+				.isEqualTo("hei");
 	}
 
 	@Test

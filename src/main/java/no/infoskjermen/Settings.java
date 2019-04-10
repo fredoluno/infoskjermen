@@ -1,56 +1,82 @@
 package no.infoskjermen;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
 
 // [END fs_include_dependencies]
-
+@Service
 public class Settings {
 
     private Logger log = LoggerFactory.getLogger(Settings.class);
 
     private Firestore db;
+    private HashMap userProfiles;
     
 
     public Settings(){
-        initiateDB();
+        userProfiles = new HashMap();
 
     }
     
     private void initiateDB(){
-        FirestoreOptions fsOptions = FirestoreOptions.getDefaultInstance();
-        log.debug("default" + fsOptions.getDatabaseId());
-        Firestore db =  FirestoreOptions.getDefaultInstance().getService();
-        log.debug("firestore koblet opp");
-        this.db = db;
-    }
-
-    public String hentSettings() throws Exception{
-        // [START fs_add_query]
-        // asynchronously query for all users born before 1900
-        ApiFuture<QuerySnapshot> query =
-                db.collection("settings").limit(1).get();
-        String setting  ="";
-        // ...
-        // query.get() blocks on response
-        QuerySnapshot querySnapshot = query.get();
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            
-            log.debug("User: " + document.getId());
-
-            System.out.println("test: " + document.getString("test"));
-            setting = document.getString("test");
+        if(this.db==null) {
+            log.debug("start firestore");
+            FirestoreOptions fsOptions = FirestoreOptions.getDefaultInstance();
+            log.debug("default" + fsOptions.getDatabaseId());
+            Firestore db2 = FirestoreOptions.getDefaultInstance().getService();
+            log.debug("firestore koblet opp");
+            this.db = db2;
         }
-        // [END fs_add_query]
-        return  setting;
+        else{
+            log.debug("db allerede satt opp");
+        }
+
     }
 
+
+    public DocumentSnapshot hentSettings(String navn) throws Exception{
+        log.debug("HentPersonalSettings");
+        DocumentSnapshot doc = (DocumentSnapshot)userProfiles.get(navn);
+        if (doc ==null){
+            log.debug("fant ikke i map, henter på fra Firestore");
+            initiateDB();
+            ApiFuture<DocumentSnapshot> qDoc = db.collection("settings").document(navn).get();
+
+             doc = qDoc.get();
+             this.userProfiles.put(navn, doc);
+        }
+        log.debug("doc:" + doc.getId());
+        return doc;
+
+    }
+
+    @Cacheable(value="Settings", key="{ #root.methodName, #navn}")
+    public HashMap getNetatmoSettings(String navn)throws Exception{
+        log.debug("getNetatmoSettings");
+        DocumentSnapshot doc  = hentSettings(navn);
+        return  (HashMap) doc.get("netatmo");
+
+    }
+
+
+    @Cacheable(value="Settings", key="{ #root.methodName, #navn}")
+    public HashMap getGmailSettings(String navn)throws Exception{
+        log.debug("getNetatmoSettings");
+        DocumentSnapshot doc  = hentSettings(navn);
+        return  (HashMap) doc.get("gmail");
+    }
+
+    @CacheEvict(value = "Settings", allEntries = true)
+    public void clearCache(){
+        userProfiles.clear();
+        log.debug("Cache slettet");}
 }

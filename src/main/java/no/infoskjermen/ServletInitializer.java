@@ -1,4 +1,4 @@
-package no.infoskjermen.infoskjermen;
+package no.infoskjermen;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
