@@ -104,7 +104,6 @@ public class NetatmoService {
             return token.getAccess_token();
         }
         MultiValueMap<String, String> parameters = getTokenParameters(navn);
-
         RestTemplate restTemplate = new RestTemplate();
         token = restTemplate.postForObject(TOKENURL,parameters, NetatmoToken.class);
         log.debug(token.getAccess_token());

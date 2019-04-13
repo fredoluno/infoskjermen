@@ -15,7 +15,13 @@ public class NetatmoToken {
     private Logger log = LoggerFactory.getLogger(NetatmoToken.class);
 
     public String getAccess_token() {
-        return access_token;
+        log.debug("Tokentid: "+ expire.compareTo(Calendar.getInstance()));
+
+        if(expire.compareTo(Calendar.getInstance())>0){
+            return access_token;
+        }
+
+        return null;
     }
 
     public void setAccess_token(String access_token) {
@@ -23,7 +29,7 @@ public class NetatmoToken {
     }
 
     public String getRefresh_token() {
-        log.debug("Tokentid: "+ expire.compareTo(Calendar.getInstance());
+
         return refresh_token;
     }
 
@@ -35,7 +41,7 @@ public class NetatmoToken {
         return expires_in;
     }
 
-    public void setExpires_in(int expires_in) {
+    public void setExpires_in(Integer expires_in) {
         expire =  Calendar.getInstance();
 
         expire.add(Calendar.SECOND, expires_in);

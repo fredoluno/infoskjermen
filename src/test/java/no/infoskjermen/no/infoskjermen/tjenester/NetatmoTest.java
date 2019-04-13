@@ -1,6 +1,7 @@
 package no.infoskjermen.no.infoskjermen.tjenester;
 
 
+import no.infoskjermen.data.NetatmoToken;
 import no.infoskjermen.tjenester.NetatmoService;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,26 @@ public class NetatmoTest {
     public void testGetOutdoorTemperature() throws Exception {
 
         assertThat(netatmo.getOutdoorTemperature("fredrik").getStatus()).isNotEmpty();
+    }
+
+
+    @Test
+    public void testNetatmoToken1() throws Exception {
+
+        NetatmoToken token = new NetatmoToken();
+        token.setAccess_token("adad");
+        token.setExpires_in(new Integer(-1));
+        assertThat(token.getAccess_token()).isNull();
+
+    }
+    @Test
+    public void testNetatmoToken2() throws Exception {
+
+        NetatmoToken token = new NetatmoToken();
+        token.setAccess_token("adad");
+        token.setExpires_in(new Integer(1));
+        assertThat(token.getAccess_token()).isEqualTo("adad");
+
     }
 
 }
