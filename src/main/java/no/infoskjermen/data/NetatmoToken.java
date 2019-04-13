@@ -1,10 +1,18 @@
-package no.infoskjermen.no.infoskjermen.data;
+package no.infoskjermen.data;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Calendar;
 
 public class NetatmoToken {
     private String access_token;
     private String refresh_token;
-    private String expires_in;
-    private String expire_in;
+    private Integer expires_in;
+    private Integer expire_in;
+    private Calendar expire;
+
+    private Logger log = LoggerFactory.getLogger(NetatmoToken.class);
 
     public String getAccess_token() {
         return access_token;
@@ -15,6 +23,7 @@ public class NetatmoToken {
     }
 
     public String getRefresh_token() {
+        log.debug("Tokentid: "+ expire.compareTo(Calendar.getInstance());
         return refresh_token;
     }
 
@@ -22,19 +31,23 @@ public class NetatmoToken {
         this.refresh_token = refresh_token;
     }
 
-    public String getExpires_in() {
+    public Integer getExpires_in() {
         return expires_in;
     }
 
-    public void setExpires_in(String expires_in) {
+    public void setExpires_in(int expires_in) {
+        expire =  Calendar.getInstance();
+
+        expire.add(Calendar.SECOND, expires_in);
+
         this.expires_in = expires_in;
     }
 
-    public String getExpire_in() {
+    public Integer getExpire_in() {
         return expire_in;
     }
 
-    public void setExpire_in(String expire_in) {
+    public void setExpire_in(Integer expire_in) {
         this.expire_in = expire_in;
     }
 

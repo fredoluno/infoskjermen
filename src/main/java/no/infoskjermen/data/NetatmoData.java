@@ -1,4 +1,4 @@
-package no.infoskjermen.no.infoskjermen.data;
+package no.infoskjermen.data;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
