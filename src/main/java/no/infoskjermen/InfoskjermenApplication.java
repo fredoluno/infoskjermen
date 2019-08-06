@@ -1,5 +1,6 @@
 package no.infoskjermen;
 
+
 import no.infoskjermen.tjenester.NetatmoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +21,6 @@ public class InfoskjermenApplication {
 
 
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(InfoskjermenApplication.class, args);
 	}
@@ -29,8 +29,9 @@ public class InfoskjermenApplication {
 	public String hello() {
 
 		try {
-            //return "hei";
-			return netatmo.getToken("fredrik");
+			//return (String)calendar.getCalendarEvents("fredrik").get("something");
+			return "hei";
+			//return netatmo.getToken("fredrik");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error: " + e.getMessage();
@@ -42,7 +43,7 @@ public class InfoskjermenApplication {
 	public String kindle() {
 		Settings settings = new Settings();
 		try {
-			return ""; //settings.hentSettings("fredrik");
+			return "This is my Kindle!"; //settings.hentSettings("fredrik");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

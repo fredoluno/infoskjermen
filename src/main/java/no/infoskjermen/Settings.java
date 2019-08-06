@@ -59,7 +59,7 @@ public class Settings {
 
     }
 
-    @Cacheable(value="Settings", key="{ #root.methodName, #navn}")
+    @Cacheable(value="Settings", key="{#root.methodName, #navn}")
     public HashMap getNetatmoSettings(String navn)throws Exception{
         log.debug("getNetatmoSettings");
         DocumentSnapshot doc  = hentSettings(navn);
