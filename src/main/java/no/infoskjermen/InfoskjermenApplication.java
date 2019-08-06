@@ -19,6 +19,8 @@ public class InfoskjermenApplication {
 
 
 
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(InfoskjermenApplication.class, args);
 	}
@@ -27,7 +29,8 @@ public class InfoskjermenApplication {
 	public String hello() {
 
 		try {
-            return netatmo.getToken("fredrik");
+            //return "hei";
+			return netatmo.getToken("fredrik");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error: " + e.getMessage();

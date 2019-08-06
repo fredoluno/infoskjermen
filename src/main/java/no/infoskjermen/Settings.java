@@ -70,7 +70,7 @@ public class Settings {
 
     @Cacheable(value="Settings", key="{ #root.methodName, #navn}")
     public HashMap getGmailSettings(String navn)throws Exception{
-        log.debug("getNetatmoSettings");
+        log.debug("getGmailSettings");
         DocumentSnapshot doc  = hentSettings(navn);
         return  (HashMap) doc.get("gmail");
     }

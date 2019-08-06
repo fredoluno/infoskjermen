@@ -34,6 +34,7 @@ public class NetatmoService {
     public String uteFuktighet= "";
 
     private NetatmoToken token;
+    private HashMap token2;
 
     private String atoken;
 
@@ -42,6 +43,7 @@ public class NetatmoService {
     @Autowired
     public NetatmoService(Settings settings){
         this.settings = settings;
+        token2 = new HashMap();
 
     }
 
@@ -52,7 +54,7 @@ public class NetatmoService {
     }
 
     public NetatmoMeasure getOutdoorTemperature(String navn) throws Exception {
-        log.debug("getIndoorTemperature");
+        log.debug("getOutdoorTemperature");
         MultiValueMap<String, String> parameters =  getOutdoorPostParameters(navn);
         return getMeasures(navn, parameters);
     }
@@ -99,6 +101,8 @@ public class NetatmoService {
 
 
     public String getToken(String navn) throws Exception {
+        NetatmoToken token = (NetatmoToken)token2.get(navn);
+
         if (token != null && token.getAccess_token()!= null){
             log.debug("token funnet");
             return token.getAccess_token();
@@ -106,9 +110,10 @@ public class NetatmoService {
         MultiValueMap<String, String> parameters = getTokenParameters(navn);
         RestTemplate restTemplate = new RestTemplate();
         token = restTemplate.postForObject(TOKENURL,parameters, NetatmoToken.class);
-        log.debug(token.getAccess_token());
-        atoken = token.getAccess_token();
-        return atoken;
+        String access_token = token.getAccess_token();
+        log.debug(access_token);
+        token2.put(navn, token);
+        return access_token;
     }
 
     private MultiValueMap<String, String> getTokenParameters(String navn) throws Exception {

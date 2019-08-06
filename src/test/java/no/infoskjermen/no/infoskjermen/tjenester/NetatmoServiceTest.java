@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class NetatmoTest {
+public class NetatmoServiceTest {
 
     @Autowired
     private NetatmoService netatmo;
@@ -29,6 +29,8 @@ public class NetatmoTest {
 
     @Test
     public void testToken() throws Exception {
+        netatmo.getToken("fredrik");
+
         assertThat(netatmo.getToken("fredrik")).isNotEmpty();
     }
 
