@@ -23,30 +23,7 @@ public class SettingsTest {
     @Autowired
     private Settings settings;
 
-    @Test
-    public void testCaching() throws Exception {
-        log.debug("startNetatmoSettings");
-        HashMap map = settings.getNetatmoSettings("testSetting");
-        log.debug(map.toString());
-        log.debug("Hentet settings engang. la oss sjekke om det caches");
-         map = settings.getNetatmoSettings("testSetting");
-        log.debug(map.toString());
-        log.debug("Hentet andre gang");
-        HashMap map2 = settings.getGmailSettings("testSetting");
-        log.debug(map2.toString());
-        log.debug("hentet gmialsettings");
-         map2 = settings.getGmailSettings("testSetting");
-        log.debug(map2.toString());
-        log.debug("hentet gmialsettings");
-        settings.clearCache();
-        log.debug("------------nå skal ting skje");
-        map = settings.getNetatmoSettings("testSetting");
-        log.debug("----------hentet netatmo");
-        map2 = settings.getGmailSettings("testSetting");
 
-        assertThat(map.get("indoor_id")).isEqualTo("indoor_idVal");
-
-    }
     @Test
     public void testNetatmoSettings() throws Exception {
         log.debug("startNetatmoSettings");

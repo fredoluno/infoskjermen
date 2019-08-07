@@ -6,8 +6,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,11 +17,11 @@ public class Settings {
     private Logger log = LoggerFactory.getLogger(Settings.class);
 
     private Firestore db;
-    private HashMap userProfiles;
+    private HashMap<String, DocumentSnapshot> userProfiles;
     
 
-    public Settings(){
-        userProfiles = new HashMap();
+    Settings(){
+        userProfiles = new HashMap<> ();
 
     }
     
@@ -43,9 +41,9 @@ public class Settings {
     }
 
 
-    public DocumentSnapshot hentSettings(String navn) throws Exception{
+    private DocumentSnapshot hentSettings(String navn) throws Exception{
         log.debug("HentPersonalSettings");
-        DocumentSnapshot doc = (DocumentSnapshot)userProfiles.get(navn);
+        DocumentSnapshot doc = userProfiles.get(navn);
         if (doc ==null){
             log.debug("fant ikke i map, henter på fra Firestore");
             initiateDB();
@@ -59,7 +57,7 @@ public class Settings {
 
     }
 
-    @Cacheable(value="Settings", key="{#root.methodName, #navn}")
+
     public HashMap getNetatmoSettings(String navn)throws Exception{
         log.debug("getNetatmoSettings");
         DocumentSnapshot doc  = hentSettings(navn);
@@ -68,15 +66,13 @@ public class Settings {
     }
 
 
-    @Cacheable(value="Settings", key="{ #root.methodName, #navn}")
+
     public HashMap getGmailSettings(String navn)throws Exception{
         log.debug("getGmailSettings");
         DocumentSnapshot doc  = hentSettings(navn);
         return  (HashMap) doc.get("gmail");
     }
 
-    @CacheEvict(value = "Settings", allEntries = true)
-    public void clearCache(){
-        userProfiles.clear();
-        log.debug("Cache slettet");}
+
+
 }
