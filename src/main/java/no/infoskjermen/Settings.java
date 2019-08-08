@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
+import no.infoskjermen.utils.DivUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,18 +60,21 @@ public class Settings {
 
 
     public HashMap getNetatmoSettings(String navn)throws Exception{
-        log.debug("getNetatmoSettings");
+        log.debug("getNetatmoSettings : " + navn);
         DocumentSnapshot doc  = hentSettings(navn);
-        return  (HashMap) doc.get("netatmo");
-
+        HashMap map = (HashMap)doc.get("netatmo");
+        log.debug(DivUtils.printHashMap(map));
+        return  map;
     }
 
 
 
-    public HashMap getGmailSettings(String navn)throws Exception{
-        log.debug("getGmailSettings");
+    public HashMap getGoogleSettings(String navn)throws Exception{
+        log.debug("getGoogleSettings: " + navn);
         DocumentSnapshot doc  = hentSettings(navn);
-        return  (HashMap) doc.get("gmail");
+        HashMap map = (HashMap) doc.get("google");
+        log.debug(DivUtils.printHashMap(map));
+        return  map;
     }
 
 

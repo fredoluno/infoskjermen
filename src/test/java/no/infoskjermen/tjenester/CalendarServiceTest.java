@@ -1,7 +1,6 @@
-package no.infoskjermen.no.infoskjermen.tjenester;
+package no.infoskjermen.tjenester;
 
 
-import no.infoskjermen.tjenester.CalendarService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

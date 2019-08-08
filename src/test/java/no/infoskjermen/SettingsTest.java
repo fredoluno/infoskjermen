@@ -35,7 +35,7 @@ public class SettingsTest {
     @Test
     public void testGmailSettings() throws Exception {
         log.debug("testGmailSettings");
-        HashMap map = settings.getGmailSettings("testSetting");
+        HashMap map = settings.getGoogleSettings("testSetting");
         assertThat(map.get("something")).isEqualTo("somethingVal");
 
     }

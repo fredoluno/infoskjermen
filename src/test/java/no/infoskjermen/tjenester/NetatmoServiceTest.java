@@ -1,8 +1,7 @@
-package no.infoskjermen.no.infoskjermen.tjenester;
+package no.infoskjermen.tjenester;
 
 
 import no.infoskjermen.data.NetatmoToken;
-import no.infoskjermen.tjenester.NetatmoService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,20 +46,20 @@ public class NetatmoServiceTest {
 
 
     @Test
-    public void testNetatmoToken1() throws Exception {
+    public void testNetatmoToken1()  {
 
         NetatmoToken token = new NetatmoToken();
         token.setAccess_token("adad");
-        token.setExpires_in(new Integer(-1));
+        token.setExpires_in(-1);
         assertThat(token.getAccess_token()).isNull();
 
     }
     @Test
-    public void testNetatmoToken2() throws Exception {
+    public void testNetatmoToken2() {
 
         NetatmoToken token = new NetatmoToken();
         token.setAccess_token("adad");
-        token.setExpires_in(new Integer(1));
+        token.setExpires_in(1);
         assertThat(token.getAccess_token()).isEqualTo("adad");
 
     }
