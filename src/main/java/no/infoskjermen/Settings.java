@@ -77,6 +77,14 @@ public class Settings {
         return  map;
     }
 
+    public HashMap getYrSettings(String navn)throws Exception{
+        log.debug("getYrSettings: " + navn);
+        DocumentSnapshot doc  = hentSettings(navn);
+        HashMap map = (HashMap) doc.get("yr");
+        log.debug(DivUtils.printHashMap(map));
+        return  map;
+    }
+
 
 
 }

@@ -60,6 +60,13 @@ public class DateTimeUtils {
         return fra.isBefore(tomorrowPlusOne) && til.isAfter(tomorrow);
     }
 
+    public static LocalDate getDateFromYr(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+
+        //convert String to LocalDate
+        return LocalDate.parse(date, formatter);
+    }
+
     public static boolean erInnen7dager(LocalDateTime dato) {
         LocalDateTime now = LocalDate.now().atStartOfDay();
         LocalDateTime tomorrow = now.plusDays(7);

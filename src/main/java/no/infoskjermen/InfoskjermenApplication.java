@@ -30,7 +30,7 @@ public class InfoskjermenApplication {
 	}
 
 	@GetMapping("/")
-	package public String hello() {
+	public String hello() {
 
 		try {
 			//return (String)calendar.getCalendarEvents("fredrik").get("something");
@@ -58,9 +58,9 @@ public class InfoskjermenApplication {
 	public String calendar() {
 		eventer = "<HTML><BODY>";
 		try {
-			calendar.getCalendarEvents("fredrik").forEach(event ->{
-				eventer = eventer + event.debug() + "<Br/>";
-			});
+			calendar.getCalendarEvents("fredrik").forEach(event ->
+				eventer = eventer + event.debug() + "<Br/>"
+			);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
