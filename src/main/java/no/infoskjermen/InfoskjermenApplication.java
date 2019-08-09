@@ -1,6 +1,7 @@
 package no.infoskjermen;
 
 
+import no.infoskjermen.tjenester.CalendarService;
 import no.infoskjermen.tjenester.NetatmoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +18,10 @@ public class InfoskjermenApplication {
    @Autowired
     private NetatmoService netatmo;
 
+   @Autowired
+   private CalendarService calendar;
 
+	private String eventer;
 
 
 
@@ -26,7 +30,7 @@ public class InfoskjermenApplication {
 	}
 
 	@GetMapping("/")
-	public String hello() {
+	package public String hello() {
 
 		try {
 			//return (String)calendar.getCalendarEvents("fredrik").get("something");
@@ -49,4 +53,22 @@ public class InfoskjermenApplication {
 		}
 		return "this is my kindle";
 	}
+
+	@GetMapping("/calendar")
+	public String calendar() {
+		eventer = "<HTML><BODY>";
+		try {
+			calendar.getCalendarEvents("fredrik").forEach(event ->{
+				eventer = eventer + event.debug() + "<Br/>";
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		eventer = eventer + "</BODY></HTML>";
+		return eventer;
+
+	}
 }
+
+

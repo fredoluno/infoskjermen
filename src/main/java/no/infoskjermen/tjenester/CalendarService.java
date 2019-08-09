@@ -86,7 +86,7 @@ public class CalendarService {
         if(eventTime.getDateTime() != null)
             return DateTimeUtils.getLocalDateTimefromLong(eventTime.getDateTime().getValue());
 
-        return DateTimeUtils.getLocalDateTimefromLong(eventTime.getDate().getValue());
+        return DateTimeUtils.getLocalDateTimefromLongDate(eventTime.getDate().getValue());
     }
 
 

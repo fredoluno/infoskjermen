@@ -43,7 +43,7 @@ public class DateTimeUtilsTest {
         assertThat(DateTimeUtils.erInnen7dager(idag.minusDays(1))).isFalse();
         assertThat(DateTimeUtils.erInnen7dager(idag.plusDays(6))).isTrue();
         assertThat(DateTimeUtils.erInnen7dager(idag)).isTrue();
-        assertThat(DateTimeUtils.erInnen7dager(idag.toLocalDate().atStartOfDay().plusDays(7))).isTrue();
+        assertThat(DateTimeUtils.erInnen7dager(idag.toLocalDate().atStartOfDay().plusDays(7).minusMinutes(1))).isTrue();
         assertThat(DateTimeUtils.erInnen7dager(idag.toLocalDate().atStartOfDay().plusMinutes(1).plusDays(7))).isFalse();
     }
 

@@ -1,14 +1,19 @@
 package no.infoskjermen.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 
 public class DateTimeUtils {
 
+    private static Logger log = LoggerFactory.getLogger(DateTimeUtils.class);
+
     public static String formatRFC3339(LocalDateTime date){
         DateTimeFormatter formatter = getRFC3339formatter();
-        return formatter.format(ZonedDateTime.of(date,ZoneId.of("Europe/Oslo")));
+        return formatter.format(ZonedDateTime.of(date,ZoneId.systemDefault()));
     }
 
     private static DateTimeFormatter getRFC3339formatter() {
@@ -24,6 +29,9 @@ public class DateTimeUtils {
 
     public static LocalDateTime getLocalDateTimefromLong(long l) {
         return Instant.ofEpochMilli(l).atZone(ZoneId.of("Europe/Oslo")).toLocalDateTime();
+    }
+    public static LocalDateTime getLocalDateTimefromLongDate(long l) {
+        return Instant.ofEpochMilli(l).atZone(ZoneId.of("UTC")).toLocalDateTime();
     }
 
 
@@ -41,7 +49,7 @@ public class DateTimeUtils {
         LocalDateTime now = LocalDate.now().atStartOfDay();
         LocalDateTime tomorrow = now.plusDays(1);
 
-        return fra.compareTo(tomorrow) < 0 && til.compareTo(now) > 0;
+        return fra.isBefore(tomorrow)  && til.isAfter(now);
     }
 
     public static boolean erImorgen(LocalDateTime fra, LocalDateTime til) {
@@ -49,19 +57,20 @@ public class DateTimeUtils {
         LocalDateTime tomorrow = now.plusDays(1);
         LocalDateTime tomorrowPlusOne = now.plusDays(2);
 
-        return fra.compareTo(tomorrowPlusOne) < 0 && til.compareTo(tomorrow) > 0;
+        return fra.isBefore(tomorrowPlusOne) && til.isAfter(tomorrow);
     }
 
     public static boolean erInnen7dager(LocalDateTime dato) {
         LocalDateTime now = LocalDate.now().atStartOfDay();
         LocalDateTime tomorrow = now.plusDays(7);
 
-        return dato.compareTo(now) > 0 && dato.compareTo(tomorrow) <= 0;
+        return dato.isAfter(now) && dato.isBefore(tomorrow);
     }
 
     public static boolean datoPassert(LocalDateTime dateToCheck){
         LocalDateTime today = LocalDate.now().atStartOfDay();
-        return dateToCheck.compareTo(today) <= 0;
+        log.debug("date: "+ dateToCheck + " now: " + today);
+        return dateToCheck.isBefore(today);
 
     }
     public static boolean erSammeDag(LocalDateTime dato, LocalDateTime dato2) {

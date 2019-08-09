@@ -36,7 +36,7 @@ public class SettingsTest {
     public void testGmailSettings() throws Exception {
         log.debug("testGmailSettings");
         HashMap map = settings.getGoogleSettings("testSetting");
-        assertThat(map.get("something")).isEqualTo("somethingVal");
+        assertThat(map.get("calendar")).isEqualTo("minkalender");
 
     }
 }
