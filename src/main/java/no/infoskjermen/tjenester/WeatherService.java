@@ -69,7 +69,6 @@ public class WeatherService {
         boolean foersteElement = true;
         boolean hovedFerdig = false;
         final int dagPeriode = 2;
-        WeatherDataDay main = new WeatherDataDay();
 
         NodeList nodeList = tabular.getChildNodes();
         log.debug("nodeList.getLength()=" + nodeList.getLength());

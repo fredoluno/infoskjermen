@@ -30,7 +30,16 @@ public class WeatherDataDay implements Comparable{
         }
     }
 
+    public String debug(){
 
+        String text = "NewDay date: " + date + "\n";
+        text = night!=null?     text + " night   - "   + night.debug() + "\n":text;
+        text = morning!=null?   text + " morning - " +  morning.debug() + "\n":text;
+        text = day!=null?       text + " day     - "     + day.debug() + "\n":text;
+        text = evening!=null?   text + " evening - " + evening.debug() + "\n":text;
+
+        return text;
+    }
 
     @Override
     public int compareTo(Object o) {

@@ -1,8 +1,10 @@
 package no.infoskjermen;
 
 
+import no.infoskjermen.data.WeatherData;
 import no.infoskjermen.tjenester.CalendarService;
 import no.infoskjermen.tjenester.NetatmoService;
+import no.infoskjermen.tjenester.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,10 +21,15 @@ public class InfoskjermenApplication {
     private NetatmoService netatmo;
 
    @Autowired
-   private CalendarService calendar;
+   	private CalendarService calendar;
+
+   @Autowired
+	private WeatherService weather;
+
 
 	private String eventer;
-
+	private static String HTML_START = "<HTML><BODY>";
+	private static String HTML_END = "</BODY></HTML>";
 
 
 	public static void main(String[] args) {
@@ -56,7 +63,7 @@ public class InfoskjermenApplication {
 
 	@GetMapping("/calendar")
 	public String calendar() {
-		eventer = "<HTML><BODY>";
+		eventer = "";
 		try {
 			calendar.getCalendarEvents("fredrik").forEach(event ->
 				eventer = eventer + event.debug() + "<Br/>"
@@ -64,10 +71,21 @@ public class InfoskjermenApplication {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return wrapHTML(eventer);
+	}
+	@GetMapping("/weather")
+	public String weather() throws Exception{
+		WeatherData weatherData = weather.getWeatherReport("fredrik");
+		eventer="<h1>Hoved</h1>";
+		eventer = eventer + weatherData.main.debug().replaceAll("\n","<br/>");
+		eventer=  eventer + "<h1>Hoved</h1>";
+		weatherData.longtimeForecast.forEach(event ->
+				eventer = eventer + event.debug().replaceAll("\n","<br/>"));
+		return wrapHTML(eventer);
+	}
 
-		eventer = eventer + "</BODY></HTML>";
-		return eventer;
-
+	public String wrapHTML(String text){
+		return HTML_START + text + HTML_END;
 	}
 }
 
