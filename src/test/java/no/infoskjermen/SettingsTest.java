@@ -39,4 +39,12 @@ public class SettingsTest {
         assertThat(map.get("calendar")).isEqualTo("minkalender");
 
     }
+
+    @Test
+    public void testEnturSettings() throws Exception {
+        log.debug("testGmailSettings");
+        HashMap map = settings.getEnturSettings("testSetting");
+        assertThat(map.get("endpoint")).isEqualTo("something");
+
+    }
 }

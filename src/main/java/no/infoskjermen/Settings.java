@@ -85,6 +85,14 @@ public class Settings {
         return  map;
     }
 
+    public HashMap getEnturSettings(String navn)throws Exception{
+        log.debug("getEnturSettings: " + navn);
+        DocumentSnapshot doc  = hentSettings(navn);
+        HashMap map = (HashMap) doc.get("entur");
+        log.debug(DivUtils.printHashMap(map));
+        return  map;
+    }
+
 
 
 }

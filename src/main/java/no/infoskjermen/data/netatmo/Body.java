@@ -1,4 +1,4 @@
-package no.infoskjermen.data;
+package no.infoskjermen.data.netatmo;
 
 
 

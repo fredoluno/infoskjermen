@@ -1,7 +1,7 @@
 package no.infoskjermen.tjenester;
 
 
-import no.infoskjermen.data.NetatmoToken;
+import no.infoskjermen.data.netatmo.NetatmoToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

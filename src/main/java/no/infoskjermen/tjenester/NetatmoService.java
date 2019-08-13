@@ -2,8 +2,8 @@ package no.infoskjermen.tjenester;
 
 
 import no.infoskjermen.Settings;
-import no.infoskjermen.data.NetatmoMeasure;
-import no.infoskjermen.data.NetatmoToken;
+import no.infoskjermen.data.netatmo.NetatmoMeasure;
+import no.infoskjermen.data.netatmo.NetatmoToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
