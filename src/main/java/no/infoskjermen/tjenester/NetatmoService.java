@@ -59,7 +59,7 @@ public class NetatmoService {
         return getMeasures(navn, parameters);
     }
 
-    private NetatmoMeasure getMeasures(String navn, MultiValueMap<String, String> parameters) throws Exception {
+    private NetatmoMeasure getMeasures(String navn, MultiValueMap<String, String> parameters) {
         log.debug("getMeasure");
         RestTemplate restTemplate = new RestTemplate();
         log.debug("URL:" + MEASUREURL);
@@ -71,8 +71,10 @@ public class NetatmoService {
         return result;
     }
 
+
+
     private MultiValueMap<String, String> getIndoorPostParameters(String navn) throws Exception {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         HashMap personalSettings = settings.getNetatmoSettings(navn);
         parameters.set("device_id",(String)personalSettings.get("indoor_id"));
         parameters.set("module_id",(String)personalSettings.get("indoor_id"));
@@ -85,7 +87,7 @@ public class NetatmoService {
     }
 
     private MultiValueMap<String, String> getOutdoorPostParameters(String navn) throws Exception {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         HashMap personalSettings = settings.getNetatmoSettings(navn);
         parameters.set("device_id",(String)personalSettings.get("indoor_id"));
         parameters.set("module_id",(String)personalSettings.get("outdoor_id"));
@@ -110,6 +112,7 @@ public class NetatmoService {
         MultiValueMap<String, String> parameters = getTokenParameters(navn);
         RestTemplate restTemplate = new RestTemplate();
         token = restTemplate.postForObject(TOKENURL,parameters, NetatmoToken.class);
+
         String access_token = token.getAccess_token();
         log.debug(access_token);
         token2.put(navn, token);
@@ -121,7 +124,7 @@ public class NetatmoService {
         HashMap personalSettings = settings.getNetatmoSettings(navn);
 
         log.debug("getToken");
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.set("grant_type", "refresh_token");
         parameters.set("client_id",(String)generalSettings.get("client_id"));
         parameters.set("client_secret", (String)generalSettings.get("client_secret"));
