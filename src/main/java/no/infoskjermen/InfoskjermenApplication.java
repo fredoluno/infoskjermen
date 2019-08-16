@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -113,13 +114,19 @@ public class InfoskjermenApplication {
 	@GetMapping("/display.svg")
 	public String svg() throws Exception{
 		String navn= "fredrik";
-		String svg = display.getDisplay(navn);
+		String svg = display.getPopulatedSVG(navn);
 		svg = calendar.populate(svg,navn);
 		svg = watch.populate(svg,navn);
 		svg = weather.populate(svg, navn);
 		svg = netatmo.populate(svg,navn);
 		return svg;
 	}
+
+	@GetMapping(value = "/bilde.png", produces=MediaType.IMAGE_PNG_VALUE)
+	public byte[] getBilde() throws  Exception{
+		return display.getKindleBilde(svg()).toByteArray();
+	}
+
 }
 
 

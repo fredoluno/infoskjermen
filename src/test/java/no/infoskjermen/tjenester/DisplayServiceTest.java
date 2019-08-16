@@ -19,7 +19,7 @@ public class DisplayServiceTest {
     @Test
     public void test()throws Exception {
 
-        assertThat(display.getDisplay("fredrik")).isNotEmpty();
+        assertThat(display.getPopulatedSVG("fredrik")).isNotEmpty();
 
     }
 }
