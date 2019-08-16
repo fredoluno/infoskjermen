@@ -1,22 +1,11 @@
 package no.infoskjermen.tjenester;
 
 
-import com.google.api.client.auth.oauth2.BearerToken;
-import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import no.infoskjermen.Settings;
 import no.infoskjermen.data.CalendarEvent;
-import no.infoskjermen.utils.DateTimeUtils;
 import no.infoskjermen.utils.DivUtils;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,21 +16,14 @@ import java.util.TreeSet;
 
 
 @Service
-public class CalendarService {
-
-    private Logger log = LoggerFactory.getLogger(CalendarService.class);
-    private Settings settings;
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private HashMap generalSettings;
+public class CalendarService extends GoogleService implements PopulateInterface{
 
 
     @Autowired
     public CalendarService(Settings settings) throws Exception{
-        this.settings = settings;
-        generalSettings = settings.getGoogleSettings("general");
+        super(settings);
+        log = LoggerFactory.getLogger(CalendarService.class);
         log.debug("generalSettings: "+ DivUtils.printHashMap(generalSettings));
-
-
 
     }
 
@@ -49,7 +31,7 @@ public class CalendarService {
         log.debug("getCalendarEvents");
         HashMap personalSettings  = settings.getGoogleSettings(navn);
         TreeSet<CalendarEvent> calEvents = new TreeSet<>();
-        Events events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusYears(1));
+        Events events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusYears(1),this.CALENDAR);
         log.debug("number of events:  " + events.size());
         for( Event googleEvent: events.getItems()){
 
@@ -82,42 +64,31 @@ public class CalendarService {
         return eventen;
     }
 
-    private LocalDateTime getDateTime(EventDateTime eventTime) {
-        if(eventTime.getDateTime() != null)
-            return DateTimeUtils.getLocalDateTimefromLong(eventTime.getDateTime().getValue());
+    @Override
+    public String populate(String svg, String navn){
+        if(!isPresentInSVG(svg)){
+            log.debug("svg inneholder ikke kalenderinformasjon");
+            return svg;
+        }
+        try{
+            TreeSet<CalendarEvent> myEvents = this.getCalendarEvents(navn);
+            int i = 1;
+            for(CalendarEvent myEvent: myEvents){
+                svg = svg.replaceAll("@@EVENT"+i+"@@", myEvent.print());
+                i++;
+            }
+        }catch(Exception e) {
+            log.error("Fikk ikke hentet Calender " + e.getMessage());
+            e.printStackTrace();
+        }
 
-        return DateTimeUtils.getLocalDateTimefromLongDate(eventTime.getDate().getValue());
+        return svg;
     }
 
-
-    private Events getEvents(HashMap personalSettings, LocalDateTime from, LocalDateTime to) throws java.io.IOException {
-
-        log.debug("getEvents from=" + DateTimeUtils.formatRFC3339(from) + " to=" + DateTimeUtils.formatRFC3339(to)  +" calendar=" + personalSettings.get("calendar"));
-
-        Calendar client = new Calendar.Builder(new NetHttpTransport(), JSON_FACTORY, createCredential((String)personalSettings.get("refresh_token")))
-                .setApplicationName("Infoskjermen")
-                .build();
-        return client.events().list((String)personalSettings.get("calendar"))
-                .setTimeMin(new com.google.api.client.util.DateTime(DateTimeUtils.formatRFC3339(from)))
-                .setTimeMax(new com.google.api.client.util.DateTime(DateTimeUtils.formatRFC3339(to)))
-                .setSingleEvents(true)
-                .execute();
+    @Override
+    public boolean isPresentInSVG(String svg) {
+        return svg.contains("@@EVENT");
     }
-
-
-    private Credential createCredential(String navn) {
-        return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
-                new NetHttpTransport())
-                .setJsonFactory(new JacksonFactory())
-                .setTokenServerUrl(
-                        new GenericUrl((String)generalSettings.get("token_url")))
-                .setClientAuthentication(new ClientParametersAuthentication((String)generalSettings.get("client_id"), (String)generalSettings.get("client_secret")))
-                .build()
-                .setRefreshToken(navn);
-
-    }
-
-
 
 
 }

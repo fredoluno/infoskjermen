@@ -70,6 +70,15 @@ public class DateTimeUtilsTest {
 
     }
 
+    @Test
+    public void testPublicTransportView(){
+        LocalDateTime dateToTest = LocalDateTime.now();
+        assertThat(Integer.parseInt(DateTimeUtils.getPublicTransportView(dateToTest.plusMinutes(5).plusSeconds(1)))).isEqualTo(5);
+        assertThat(DateTimeUtils.getPublicTransportView(dateToTest.plusMinutes(121).plusSeconds(1))).contains(":");
+        assertThat(DateTimeUtils.getPublicTransportView(dateToTest.plusHours(24).plusSeconds(1))).contains("timer");
+
+    }
+
 }
 
 

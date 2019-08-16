@@ -1,10 +1,10 @@
 package no.infoskjermen;
 
 
+import no.infoskjermen.data.PublicTransportData;
 import no.infoskjermen.data.WeatherData;
-import no.infoskjermen.tjenester.CalendarService;
-import no.infoskjermen.tjenester.NetatmoService;
-import no.infoskjermen.tjenester.WeatherService;
+import no.infoskjermen.tjenester.*;
+import no.infoskjermen.utils.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +25,14 @@ public class InfoskjermenApplication {
 
    @Autowired
 	private WeatherService weather;
+
+	@Autowired
+   private PublicTransportService publicTransport;
+
+	@Autowired
+	private DisplayService display;
+	@Autowired
+	private WatchService watch;
 
 
 	private String eventer;
@@ -86,6 +94,31 @@ public class InfoskjermenApplication {
 
 	public String wrapHTML(String text){
 		return HTML_START + text + HTML_END;
+	}
+
+	@GetMapping("/transport")
+	public String transport() throws Exception{
+		PublicTransportData data  = publicTransport.getPublicTransporSchedule("fredrik");
+		eventer="<h1>"+data.name+"</h1>";
+		eventer=  eventer + "<h2>ankomst</h2>";
+		data.arrivals.forEach(event ->
+				eventer = eventer + DateTimeUtils.getPublicTransportView(event) + ", ");
+		eventer=  eventer + "<h2>avgang</h2>";
+		data.departures.forEach(event ->
+				eventer = eventer + DateTimeUtils.getPublicTransportView(event)+ ", ");
+
+		return wrapHTML(eventer);
+	}
+
+	@GetMapping("/display.svg")
+	public String svg() throws Exception{
+		String navn= "fredrik";
+		String svg = display.getDisplay(navn);
+		svg = calendar.populate(svg,navn);
+		svg = watch.populate(svg,navn);
+		svg = weather.populate(svg, navn);
+		svg = netatmo.populate(svg,navn);
+		return svg;
 	}
 }
 

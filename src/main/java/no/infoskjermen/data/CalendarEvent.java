@@ -64,6 +64,10 @@ public class CalendarEvent implements Comparable {
         return "printDato="+ printDato() + " title=" +title + " eventStart=" + eventStart+ " eventEnd=" + eventEnd;
     }
 
+    public String print(){
+        return printDato() + " - " + this.title;
+    }
+
 
 
 

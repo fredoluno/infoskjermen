@@ -64,4 +64,11 @@ public class NetatmoServiceTest {
 
     }
 
+    @Test
+    public void testNetatmoData() throws Exception{
+
+        assertThat(netatmo.getNetatmoData("fredrik").indoorTemperature.intValue()).isEqualTo(1);
+
+    }
+
 }

@@ -30,5 +30,11 @@ public class CalendarServiceTest {
         assertThat(calendar.getCalendarEvents("fredrik")).isNotEmpty();
 
     }
+    @Test
+    public  void testPopulate(){
+        String test = "dette er en test @@EVENT1@@ og @@EVENT2@@";
+        assertThat(calendar.populate(test,"fredrik")).doesNotContain("@@");
+    }
+
 
 }

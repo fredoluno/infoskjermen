@@ -68,6 +68,16 @@ public class Settings {
     }
 
 
+    public HashMap getDisplaySettings(String navn)throws Exception{
+        log.debug("getDisplaySettings : " + navn);
+        DocumentSnapshot doc  = hentSettings(navn);
+        HashMap map = (HashMap)doc.get("display");
+        //log.debug(DivUtils.printHashMap(map));
+        return  map;
+    }
+
+
+
 
     public HashMap getGoogleSettings(String navn)throws Exception{
         log.debug("getGoogleSettings: " + navn);

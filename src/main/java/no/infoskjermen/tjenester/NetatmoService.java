@@ -2,6 +2,7 @@ package no.infoskjermen.tjenester;
 
 
 import no.infoskjermen.Settings;
+import no.infoskjermen.data.NetatmoData;
 import no.infoskjermen.data.netatmo.NetatmoMeasure;
 import no.infoskjermen.data.netatmo.NetatmoToken;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 
 @Service
-public class NetatmoService {
+public class NetatmoService implements PopulateInterface {
 
     private static  String TOKENURL ="https://api.netatmo.com/oauth2/token";
     private static  String MEASUREURL="https://api.netatmo.com/api/getmeasure";
@@ -99,6 +100,9 @@ public class NetatmoService {
         return parameters;
     }
 
+    public NetatmoData getNetatmoData(String navn) throws Exception{
+        return  new NetatmoData(getIndoorTemperature(navn), getOutdoorTemperature(navn));
+    }
 
 
 
@@ -132,6 +136,36 @@ public class NetatmoService {
         log.debug(""+parameters);
         return parameters;
     }
+
+    @Override
+    public String populate(String svg, String navn){
+        if(!isPresentInSVG(svg)){
+            log.debug("svg inneholder ikke Netatmo");
+            return svg;
+        }
+        try{
+            NetatmoData myData = this.getNetatmoData(navn);
+
+            svg = svg.replaceAll("@@INNETEMP@@",""+myData.indoorTemperature) ;
+            svg = svg.replaceAll("@@UTETEMP@@", ""+myData.outdoorTemperature);
+            svg = svg.replaceAll("@@INNEFUKTIGHET@@", ""+myData.indoorHumidity);
+            svg = svg.replaceAll("@@UTEFUKTIGHETT@@", ""+myData.outdoorHumidity);
+            svg = svg.replaceAll("@@LYD@@",         ""+myData.noise);
+            svg = svg.replaceAll("@@TRYKK@@",       ""+myData.pressure);
+            svg = svg.replaceAll("@@CO2@@",         ""+myData.co2);
+        }catch(Exception e) {
+            log.error("Fikk ikke hentet Netatmo " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return svg;
+    }
+
+    @Override
+    public boolean isPresentInSVG(String svg) {
+        return svg.contains("TEMP@@") ||svg.contains("LYD@@")||svg.contains("CO2@@")||svg.contains("TRYKK@@")||svg.contains("FUKTIGHET@@");
+    }
+
 
 
 }

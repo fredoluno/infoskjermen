@@ -2,6 +2,7 @@ package no.infoskjermen.tjenester;
 
 import no.infoskjermen.Settings;
 import no.infoskjermen.data.PublicTransportData;
+import no.infoskjermen.utils.DateTimeUtils;
 import no.infoskjermen.utils.DivUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -74,11 +73,11 @@ public class PublicTransportService {
             if(lineIds.contains(getLineId((HashMap) estimatedCall))){
                 String frontText = getFrontText((HashMap) estimatedCall);
                 if(arrivalFronttexts.contains(frontText)) {
-                    LocalDateTime date = LocalDateTime.parse((String)((HashMap)estimatedCall).get("expectedArrivalTime"), getFormatter());
+                    LocalDateTime date = LocalDateTime.parse((String)((HashMap)estimatedCall).get("expectedArrivalTime"), DateTimeUtils.getEnturFormatter());
                     arrivalDates.add(date);
                 }
                 else if(departureFronttexts.contains(frontText)) {
-                    LocalDateTime date = LocalDateTime.parse((String)((HashMap)estimatedCall).get("expectedDepartureTime"),  getFormatter());
+                    LocalDateTime date = LocalDateTime.parse((String)((HashMap)estimatedCall).get("expectedDepartureTime"),  DateTimeUtils.getEnturFormatter());
                     departureDates.add(date);
                 }
                 else{
@@ -93,14 +92,7 @@ public class PublicTransportService {
         return new PublicTransportData((String)stopPlace.get("name"), arrivalDates,departureDates);
     }
 
-    private DateTimeFormatter getFormatter(){
-        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                .parseCaseInsensitive()
-                .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                .appendOffset("+HHmm","Z")
-                .toFormatter();
-        return formatter  ;
-    }
+
 
     private String getFrontText(HashMap estimatedCall) {
         return ((String)(((HashMap)estimatedCall.get("destinationDisplay")).get("frontText"))).toLowerCase();
