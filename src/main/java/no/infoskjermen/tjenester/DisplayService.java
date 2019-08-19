@@ -18,6 +18,7 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -48,7 +49,7 @@ public class DisplayService extends GoogleService {
 
 
         String svg = getSVG(displayName, navn );
-        log.debug("svg: " + svg);
+        log.debug("svg is populated. length:" +svg.length());
 
         return getSVG(displayName, navn );
     }
@@ -70,6 +71,19 @@ public class DisplayService extends GoogleService {
     }
 
     public ByteArrayOutputStream getKindleBilde(String svg) throws Exception{
+        String fontConfig = System.getProperty("java.home")
+                + File.separator + "lib"
+                + File.separator + "fontconfig.Prodimage.properties";
+        if (new File(fontConfig).exists()) {
+            log.debug("found logfile: " + fontConfig);
+            System.setProperty("sun.awt.fontconfig", fontConfig);
+        }
+        else{
+            log.error("didn't fint logfile: " + fontConfig);
+        }
+
+
+
         String mySvg = svg;
         long startTime = System.nanoTime();
 
@@ -77,6 +91,7 @@ public class DisplayService extends GoogleService {
         System.gc();
 
         PNGTranscoder t = new PNGTranscoder();
+
         ByteArrayOutputStream ostream ;
 
         ostream = new ByteArrayOutputStream();    //("public/images/out.png");
