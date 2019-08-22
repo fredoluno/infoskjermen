@@ -116,15 +116,22 @@ public class InfoskjermenApplication {
 		String navn= "fredrik";
 		String svg = display.getPopulatedSVG(navn);
 		svg = calendar.populate(svg,navn);
-		svg = watch.populate(svg,navn);
 		svg = weather.populate(svg, navn);
 		svg = netatmo.populate(svg,navn);
+		svg = publicTransport.populate(svg,navn);
+		svg = watch.populate(svg,navn);
+
 		return svg;
 	}
 
 	@GetMapping(value = "/bilde.png", produces=MediaType.IMAGE_PNG_VALUE)
-	public byte[] getBilde() throws  Exception{
+	public byte[] getBildePNG() throws  Exception{
 		return display.getKindleBilde(svg()).toByteArray();
+	}
+
+	@GetMapping(value = "/bilde.bmp", produces="image/bmp")
+	public byte[] getBildeBMP() throws  Exception{
+		return display.getBMPBilde(svg()).toByteArray();
 	}
 
 }

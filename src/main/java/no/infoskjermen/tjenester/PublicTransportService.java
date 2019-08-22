@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 @Service
-public class PublicTransportService {
+public class PublicTransportService  implements PopulateInterface{
 
     private static final String STOPPLACE="@@STOPPLACE_ID@@";
     private static final String ET_CLIENT_NAME = "fredoluno@gmail.com - Infoskjermen";
@@ -109,6 +109,38 @@ public class PublicTransportService {
         query = query.replaceAll(STOPPLACE, stopplace);
         log.debug("query:" + query);
         return query;
+    }
+
+
+    @Override
+    public boolean isPresentInSVG(String svg) {
+        return svg.contains("@@AVGANG@@")  || svg.contains("@@ANKOMST@@") ;
+    }
+
+    @Override
+    public String populate(String svg, String navn) {
+
+        if(!isPresentInSVG(svg)){
+            log.debug("Inneholder ikke PublicTransport");
+            return svg;
+        }
+
+        try{
+            PublicTransportData myData = getPublicTransporSchedule(navn);
+            if(myData.departures != null) {
+                svg = svg.replaceAll("@@AVGANG@@", DateTimeUtils.getPublicTransportView(myData.departures.first()));
+            }
+
+
+            if(myData.arrivals != null) {
+                svg = svg.replaceAll("@@ANKOMST@@", DateTimeUtils.getPublicTransportView(myData.arrivals.first()));
+            }
+        }catch (Exception e){
+            log.error("feilet å hente PublicTransport" + e.getMessage());
+            e.printStackTrace();
+        }
+
+    return svg;
     }
 
 }

@@ -70,18 +70,19 @@ public class DisplayService extends GoogleService {
 
     }
 
-    public ByteArrayOutputStream getKindleBilde(String svg) throws Exception{
-        String fontConfig = System.getProperty("java.home")
-                + File.separator + "lib"
-                + File.separator + "fontconfig.Prodimage.properties";
-        if (new File(fontConfig).exists()) {
-            log.debug("found logfile: " + fontConfig);
-            System.setProperty("sun.awt.fontconfig", fontConfig);
-        }
-        else{
-            log.error("didn't fint logfile: " + fontConfig);
-        }
+    public ByteArrayOutputStream getKindleBilde(String svg)throws Exception{
+        return getBilde(svg,"png");
 
+    }
+
+    public ByteArrayOutputStream getBMPBilde(String svg)throws Exception{
+        return getBilde(svg,"bmp");
+
+    }
+
+
+    public ByteArrayOutputStream getBilde(String svg,String outputType) throws Exception{
+        setUpFonts();
 
 
         String mySvg = svg;
@@ -107,13 +108,27 @@ public class DisplayService extends GoogleService {
         colorConvert.filter(image, image2);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image2, "png",baos );
+        ImageIO.write(image2, outputType,baos );
         ostream.close();
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime);
         log.info("Tidbrukt=" + duration);
         return baos;
+    }
+
+
+
+    private void setUpFonts() {
+        String fontConfig = System.getProperty("java.home")
+                + File.separator + "lib"
+                + File.separator + "fontconfig.Prodimage.properties";
+        if (new File(fontConfig).exists()) {
+            log.debug("found logfile: " + fontConfig);
+            System.setProperty("sun.awt.fontconfig", fontConfig);
+        } else {
+            log.error("didn't fint logfile: " + fontConfig);
+        }
     }
 
 
