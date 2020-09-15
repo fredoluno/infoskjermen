@@ -21,4 +21,5 @@ gcloud app logs tail
 Refresh token får du ved å følge denne
 https://www.youtube.com/watch?v=hfWe1gPCnzc
 
+OK
 
