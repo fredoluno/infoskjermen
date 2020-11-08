@@ -16,6 +16,7 @@ public class WatchService implements PopulateInterface {
     @Override
     public String populate(String svg, String navn) {
         return svg.replaceAll("@@OPPDATERT@@",DateTimeUtils.getTime(ZonedDateTime.now(ZoneId.of("Europe/Oslo")).toLocalDateTime()));
+
     }
 
     @Override

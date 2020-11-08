@@ -100,8 +100,10 @@ public class DateTimeUtils {
     }
 
     public static String getPublicTransportView(LocalDateTime date){
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Oslo")).toLocalDateTime();
+
         Duration duration = Duration.between(now, date);
+        log.debug("duration: " +  duration.toMinutes());
         if(duration.toMinutes()<120){
             return ""+ duration.toMinutes();
         }else if (duration.toHours() < 24){
