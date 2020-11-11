@@ -14,6 +14,7 @@ public class NetatmoData {
     public final Integer pressure;
 
 
+
     public NetatmoData(NetatmoMeasure indoorMeasure, NetatmoMeasure outsideMeasure) {
         indoorTemperature = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(0).intValue());
         indoorHumidity = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(2).intValue());

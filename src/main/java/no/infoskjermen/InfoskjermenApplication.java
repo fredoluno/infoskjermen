@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
@@ -34,6 +35,7 @@ public class InfoskjermenApplication {
 	private DisplayService display;
 	@Autowired
 	private WatchService watch;
+
 
 
 	private String eventer;
@@ -113,7 +115,11 @@ public class InfoskjermenApplication {
 
 	@GetMapping("/display.svg")
 	public String svg() throws Exception{
-		String navn= "fredrik";
+		return svg("fredrik");
+	}
+
+	public String svg(String navn) throws Exception{
+
 		String svg = display.getPopulatedSVG(navn);
 		svg = calendar.populate(svg,navn);
 		svg = weather.populate(svg, navn);
@@ -124,6 +130,7 @@ public class InfoskjermenApplication {
 		return svg;
 	}
 
+
 	@GetMapping(value = "/bilde.png", produces=MediaType.IMAGE_PNG_VALUE)
 	public byte[] getBildePNG() throws  Exception{
 		return display.getKindleBilde(svg()).toByteArray();
@@ -133,6 +140,22 @@ public class InfoskjermenApplication {
 	public byte[] getBildeBMP() throws  Exception{
 		return display.getBMPBilde(svg()).toByteArray();
 	}
+
+	@GetMapping(value = "/skjerm/{navn}.png", produces=MediaType.IMAGE_PNG_VALUE)
+	public byte[] getBildePNG(@PathVariable String navn) throws  Exception{
+		return display.getKindleBilde(svg(navn)).toByteArray();
+	}
+	@GetMapping(value = "/clear/{navn}.png", produces=MediaType.IMAGE_PNG_VALUE)
+	public byte[] getCleanBildePNG(@PathVariable String navn) throws  Exception{
+		display.clearCache(navn);
+		return display.getKindleBilde(svg(navn)).toByteArray();
+	}
+	@GetMapping(value = "/clear/{navn}.svg")
+	public String getCleanSvg(@PathVariable String navn) throws  Exception{
+		display.clearCache(navn);
+		return svg(navn);
+	}
+
 
 }
 

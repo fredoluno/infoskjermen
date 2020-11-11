@@ -41,6 +41,10 @@ public class Settings {
 
     }
 
+    public void clearCache(String navn){
+        userProfiles.remove(navn);
+
+    }
 
     private DocumentSnapshot hentSettings(String navn) throws Exception{
         log.debug("HentPersonalSettings");

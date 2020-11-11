@@ -49,7 +49,7 @@ public class WeatherService implements PopulateInterface {
 
         boolean varselFraIdag = true;
         HashMap personalSettings = settings.getYrSettings(navn);
-        String url = (String) personalSettings.get("url");
+        String url = personalSettings!=null && personalSettings.get("url")!=null?(String) personalSettings.get("url"):"";
 
         WeatherData returnData = (WeatherData)weatherReports.get(url);
         if(returnData != null) {
@@ -65,6 +65,8 @@ public class WeatherService implements PopulateInterface {
     private WeatherData getWeatherData(String url) throws Exception {
         WeatherData weatherData = new WeatherData();
         Document doc = getWeatherFromYr(url);
+        if(doc==null) return weatherData;
+
         Node tabular = doc.getElementsByTagName("tabular").item(0);
 
         boolean foersteElement = true;
@@ -122,6 +124,7 @@ public class WeatherService implements PopulateInterface {
 
 
     private Document getWeatherFromYr(String url) throws Exception{
+        if(url== null || url.equals("")) return null;
         log.debug("getWeatherFromYr for " + url );
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

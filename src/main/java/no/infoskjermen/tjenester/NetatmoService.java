@@ -2,6 +2,7 @@ package no.infoskjermen.tjenester;
 
 
 import no.infoskjermen.Settings;
+import no.infoskjermen.data.Cache;
 import no.infoskjermen.data.NetatmoData;
 import no.infoskjermen.data.netatmo.NetatmoMeasure;
 import no.infoskjermen.data.netatmo.NetatmoToken;
@@ -14,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class NetatmoService implements PopulateInterface {
@@ -40,12 +42,14 @@ public class NetatmoService implements PopulateInterface {
     private String atoken;
 
     private Settings settings;
+    private Cache data;
+    private final long expireTime = 2 * 60 * 1000;
 
     @Autowired
     public NetatmoService(Settings settings){
         this.settings = settings;
         token2 = new HashMap();
-
+        data = new Cache();
     }
 
     public NetatmoMeasure getIndoorTemperature(String navn) throws Exception {
@@ -64,11 +68,19 @@ public class NetatmoService implements PopulateInterface {
         log.debug("getMeasure");
         RestTemplate restTemplate = new RestTemplate();
         log.debug("URL:" + MEASUREURL);
+        log.debug("parameters:" + parameters);
+        String cacheKey = parameters.getFirst("module_id");
+        log.debug("cacheKey" + cacheKey);
+        NetatmoMeasure result =(NetatmoMeasure)data.get(cacheKey);
+        if(result !=null){
+            log.debug("found in Cache");
+            return result;
+        }
 
-        NetatmoMeasure result = restTemplate.postForObject(MEASUREURL,parameters, NetatmoMeasure.class);
+        result = restTemplate.postForObject(MEASUREURL,parameters, NetatmoMeasure.class);
         assert result != null;
         log.debug("reultat:" + result.getBody().get(0).getValue().get(0));
-
+        data.add(cacheKey,result,expireTime);
         return result;
     }
 
@@ -118,7 +130,7 @@ public class NetatmoService implements PopulateInterface {
         token = restTemplate.postForObject(TOKENURL,parameters, NetatmoToken.class);
 
         String access_token = token.getAccess_token();
-        log.debug(access_token);
+        log.debug("access_token" + token.getExpire_in() +  " " +token.getAccess_token());
         token2.put(navn, token);
         return access_token;
     }

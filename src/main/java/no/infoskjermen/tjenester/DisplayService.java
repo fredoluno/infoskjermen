@@ -35,13 +35,20 @@ public class DisplayService extends GoogleService {
 
     }
 
+
+    public void clearCache(String navn){
+        settings.clearCache(navn);
+    }
+
     public String getPopulatedSVG(String navn) throws Exception{
         log.debug("getPopulatedSVG");
         HashMap personalSettings  = settings.getGoogleSettings(navn);
-
-        Events events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusSeconds(1),this.DISPLAY_CALENDAR);
+        Events events = null;
+        if(personalSettings != null){
+        events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusSeconds(1),this.DISPLAY_CALENDAR);
+        }
         String displayName = DEFAULT;
-        if( events.getItems().size() > 0){
+        if( events != null && events.getItems().size() > 0){
             Event event = events.getItems().get(0);
             displayName = event.getSummary();
         }
@@ -78,11 +85,13 @@ public class DisplayService extends GoogleService {
     public ByteArrayOutputStream getBMPBilde(String svg)throws Exception{
         return getBilde(svg,"bmp");
 
+
     }
 
 
     public ByteArrayOutputStream getBilde(String svg,String outputType) throws Exception{
         setUpFonts();
+
 
 
         String mySvg = svg;
