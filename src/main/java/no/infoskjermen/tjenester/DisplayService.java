@@ -44,7 +44,7 @@ public class DisplayService extends GoogleService {
         log.debug("getPopulatedSVG");
         HashMap personalSettings  = settings.getGoogleSettings(navn);
         Events events = null;
-        if(personalSettings != null){
+        if(personalSettings != null && personalSettings.get(this.DISPLAY_CALENDAR)!=null ){
         events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusSeconds(1),this.DISPLAY_CALENDAR);
         }
         String displayName = DEFAULT;
