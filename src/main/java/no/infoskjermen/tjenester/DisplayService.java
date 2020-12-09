@@ -26,6 +26,7 @@ import java.util.HashMap;
 public class DisplayService extends GoogleService {
 
     private final String DEFAULT="default";
+    private final String NOSETTINGS="nosettings";
     private final String PERSONAL = ".personal";
 
     public DisplayService(Settings settings) throws Exception{
@@ -40,18 +41,30 @@ public class DisplayService extends GoogleService {
         settings.clearCache(navn);
     }
 
+    public String populate(String svg, String navn){
+
+        return svg.replaceAll("@@skjermid@@",navn);
+    }
+
+
     public String getPopulatedSVG(String navn) throws Exception{
         log.debug("getPopulatedSVG");
         HashMap personalSettings  = settings.getGoogleSettings(navn);
         Events events = null;
-        if(personalSettings != null && personalSettings.get(this.DISPLAY_CALENDAR)!=null ){
-        events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusSeconds(1),this.DISPLAY_CALENDAR);
-        }
         String displayName = DEFAULT;
-        if( events != null && events.getItems().size() > 0){
-            Event event = events.getItems().get(0);
-            displayName = event.getSummary();
+
+        if (personalSettings == null){
+            log.debug("fant ikke settings for denne skjermen");
+            displayName = NOSETTINGS;
+        }else if(personalSettings.get(this.DISPLAY_CALENDAR)!=null) {
+            events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusSeconds(1),this.DISPLAY_CALENDAR);
+            if( events != null && events.getItems().size() > 0){
+                Event event = events.getItems().get(0);
+                displayName = event.getSummary();
+            }
         }
+
+
         log.debug("displayName: " + displayName);
 
 

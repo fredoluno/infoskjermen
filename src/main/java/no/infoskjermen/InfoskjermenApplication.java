@@ -121,6 +121,7 @@ public class InfoskjermenApplication {
 	public String svg(String navn) throws Exception{
 
 		String svg = display.getPopulatedSVG(navn);
+		svg = display.populate(svg,navn);
 		svg = calendar.populate(svg,navn);
 		svg = weather.populate(svg, navn);
 		svg = netatmo.populate(svg,navn);
