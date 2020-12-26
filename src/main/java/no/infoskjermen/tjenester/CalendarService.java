@@ -31,12 +31,20 @@ public class CalendarService extends GoogleService implements PopulateInterface{
         log.debug("getCalendarEvents");
         HashMap personalSettings  = settings.getGoogleSettings(navn);
         TreeSet<CalendarEvent> calEvents = new TreeSet<>();
-        Events events = getEvents(personalSettings, LocalDateTime.now(), LocalDateTime.now().plusYears(1),this.CALENDAR);
-        log.debug("number of events:  " + events.size());
-        for( Event googleEvent: events.getItems()){
 
-            CalendarEvent event = populateEvent(googleEvent);
-            calEvents.add(event);
+        String calendarsStr =(String)personalSettings.get(this.CALENDAR);
+        if (calendarsStr == null) return calEvents;
+        String refresh_token = (String)personalSettings.get("refresh_token");
+        String[] calendars = calendarsStr.split(",");
+        for (String calendar : calendars){
+            log.debug("Henter fra calender: " + calendar);
+            Events events = getEvents(refresh_token, LocalDateTime.now(), LocalDateTime.now().plusYears(1),calendar.trim());
+            log.debug("number of events:  " + events.size());
+            for( Event googleEvent: events.getItems()){
+
+                CalendarEvent event = populateEvent(googleEvent);
+                calEvents.add(event);
+            }
         }
 
         logEventer(calEvents);

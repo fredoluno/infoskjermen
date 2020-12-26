@@ -43,16 +43,23 @@ public class GoogleService {
 
     protected Events getEvents(HashMap personalSettings, LocalDateTime from, LocalDateTime to, String calendarName) throws java.io.IOException {
 
-        log.debug("getEvents from=" + DateTimeUtils.formatRFC3339(from) + " to=" + DateTimeUtils.formatRFC3339(to)  +" calendar=" + personalSettings.get(calendarName));
 
-        Calendar client = new Calendar.Builder(new NetHttpTransport(), JSON_FACTORY, createCredential((String)personalSettings.get("refresh_token")))
+        log.debug("getEvents from=" + DateTimeUtils.formatRFC3339(from) + " to=" + DateTimeUtils.formatRFC3339(to)  +" calendar=" + personalSettings.get(calendarName));
+        return getEvents((String)personalSettings.get("refresh_token"),from,to,(String)personalSettings.get(calendarName));
+
+    }
+
+
+    protected  Events getEvents(String refresh_token,LocalDateTime from, LocalDateTime to, String calendarID )  throws java.io.IOException{
+        Calendar client = new Calendar.Builder(new NetHttpTransport(), JSON_FACTORY, createCredential(refresh_token))
                 .setApplicationName("Infoskjermen")
                 .build();
-        return client.events().list((String)personalSettings.get(calendarName))
+        return client.events().list(calendarID)
                 .setTimeMin(new com.google.api.client.util.DateTime(DateTimeUtils.formatRFC3339(from)))
                 .setTimeMax(new com.google.api.client.util.DateTime(DateTimeUtils.formatRFC3339(to)))
                 .setSingleEvents(true)
                 .execute();
+
     }
 
     private Credential createCredential(String navn) {
