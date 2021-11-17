@@ -95,6 +95,15 @@ public class InfoskjermenApplication {
 		return wrapHTML(eventer);
 	}
 
+	@GetMapping("/yrny")
+	public String yrny() throws Exception{
+		WeatherData per = weather.getWeatherFromYrNew("noe");
+
+		eventer="<h1>Yr Ny</h1>";
+		eventer = eventer + per;
+		return wrapHTML(eventer);
+	}
+
 	public String wrapHTML(String text){
 		return HTML_START + text + HTML_END;
 	}

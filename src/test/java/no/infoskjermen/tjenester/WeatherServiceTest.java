@@ -21,7 +21,16 @@ public class WeatherServiceTest {
         WeatherData weatherData = weather.getWeatherReport("fredrik");
         assertThat(weatherData.main).isNotNull();
 
-         weatherData = weather.getWeatherReport("fredrik");
-        assertThat(weatherData.main).isNotNull();
     }
+
+    @Test
+    public void testGetnewYr() throws Exception {
+        //WeatherData weatherData = weather.getWeatherReport("fredrik");
+       WeatherData wd= weather.getWeatherFromYrNew("https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=60.1603&lon=11.1862");
+
+        assertThat(wd).isNotNull();
+
+    }
+
+
 }

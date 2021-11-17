@@ -31,6 +31,11 @@ public class DateTimeUtils {
 
     }
 
+    public static LocalDateTime getYrDateTime(String value){
+        return LocalDateTime.parse(value, DateTimeUtils.getEnturFormatter());
+
+    }
+
 
     public static LocalDateTime getLocalDateTimefromRFC3339(String value) {
         DateTimeFormatter formatter = getRFC3339formatter();

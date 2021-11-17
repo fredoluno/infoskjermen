@@ -21,7 +21,7 @@ import java.util.TreeSet;
 public class PublicTransportService  implements PopulateInterface{
 
     private static final String STOPPLACE="@@STOPPLACE_ID@@";
-    private static final String ET_CLIENT_NAME = "fredoluno@gmail.com - Infoskjermen";
+    private static final String ET_CLIENT_NAME = "fredoluno@gmail.com - kemkakorr";
 
     private Logger log = LoggerFactory.getLogger(PublicTransportService.class);
     private Settings settings;
