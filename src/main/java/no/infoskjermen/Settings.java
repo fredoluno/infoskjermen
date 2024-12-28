@@ -19,6 +19,8 @@ public class Settings {
 
     private Firestore db;
     private HashMap<String, DocumentSnapshot> userProfiles;
+
+  
     
 
     Settings(){
@@ -105,6 +107,18 @@ public class Settings {
         HashMap map = (HashMap) doc.get("entur");
         log.debug(DivUtils.printHashMap(map));
         return  map;
+    }
+
+    public boolean setNetatmoRefreshToken(String navn, String refresh_token)throws Exception{
+        log.debug("setNetatmoRefreshToken:"+refresh_token);
+        initiateDB();
+        HashMap map = getNetatmoSettings(navn);
+        map.put("refresh_token", refresh_token);
+        
+
+        db.collection("settings").document(navn).update("netatmo", map);
+        return true;
+
     }
 
 

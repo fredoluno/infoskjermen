@@ -130,6 +130,7 @@ public class NetatmoService implements PopulateInterface {
         token = restTemplate.postForObject(TOKENURL,parameters, NetatmoToken.class);
 
         String access_token = token.getAccess_token();
+        settings.setNetatmoRefreshToken(navn,token.getRefresh_token());
         log.debug("access_token" + token.getExpire_in() +  " " +token.getAccess_token());
         token2.put(navn, token);
         return access_token;

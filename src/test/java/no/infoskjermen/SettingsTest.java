@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,6 +46,20 @@ public class SettingsTest {
         log.debug("testGmailSettings");
         HashMap map = settings.getEnturSettings("testSetting");
         assertThat(map.get("endpoint")).isEqualTo("something");
+
+    }
+    @Test
+    public void testSetNetatmoRefreshToken() throws Exception {
+        log.debug("testGmailSettings");
+        UUID uuid = UUID.randomUUID();
+        String uuidAsString = uuid.toString();
+        boolean ret = settings.setNetatmoRefreshToken("testSetting", uuidAsString);
+        settings.clearCache("testSetting");
+        HashMap map = settings.getNetatmoSettings("testSetting");
+        assertThat(map.get("refresh_token")).isEqualTo(uuidAsString);
+        
+        
+
 
     }
 }

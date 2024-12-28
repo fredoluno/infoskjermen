@@ -1,6 +1,7 @@
 package no.infoskjermen;
 
 
+import no.infoskjermen.data.NetatmoData;
 import no.infoskjermen.data.PublicTransportData;
 import no.infoskjermen.data.WeatherData;
 import no.infoskjermen.tjenester.*;
@@ -103,6 +104,14 @@ public class InfoskjermenApplication {
 		eventer = eventer + per;
 		return wrapHTML(eventer);
 	}
+
+	@GetMapping("/netatmo")
+	public String netatmo() throws Exception{
+		NetatmoData data = netatmo.getNetatmoData("fredrik");
+		return wrapHTML(""+data.outdoorTemperature);
+		
+	}
+
 
 	public String wrapHTML(String text){
 		return HTML_START + text + HTML_END;
