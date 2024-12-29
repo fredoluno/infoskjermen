@@ -2,16 +2,17 @@ package no.infoskjermen.tjenester;
 
 
 import no.infoskjermen.data.netatmo.NetatmoToken;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class NetatmoServiceTest {
 
@@ -20,7 +21,7 @@ public class NetatmoServiceTest {
 
 
 
-    @Before
+    @BeforeEach
     public void setUp(){
 
 

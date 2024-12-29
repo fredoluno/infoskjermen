@@ -16,6 +16,10 @@ mvn -DskipTests spring-boot:run
 
 droppe tester
 -DskipTests
+
+må også ha java app-engine installert på google cloud
+gcloud components install app-engine-java
+
 prodsett
 mvn  appengine:deploy
 
