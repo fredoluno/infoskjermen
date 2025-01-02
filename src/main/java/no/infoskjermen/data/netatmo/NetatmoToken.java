@@ -3,6 +3,9 @@ package no.infoskjermen.data.netatmo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.infoskjermen.utils.DateTimeUtils;
+
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 public class NetatmoToken {
@@ -16,6 +19,7 @@ public class NetatmoToken {
 
     public String getAccess_token() {
         log.debug("Tokentid: "+ expire.compareTo(Calendar.getInstance()));
+        log.debug( "Time now: " + DateTimeUtils.formatCalendar(Calendar.getInstance()) + " Expire: " +  DateTimeUtils.formatCalendar(expire) ) ;
 
         if(expire.compareTo(Calendar.getInstance())>0){
             return access_token;
@@ -43,9 +47,10 @@ public class NetatmoToken {
 
     public void setExpires_in(Integer expires_in) {
         expire =  Calendar.getInstance();
+        log.debug("Time now: " +DateTimeUtils.formatCalendar(expire)) ;
 
         expire.add(Calendar.SECOND, expires_in);
-
+        log.debug("Expire: " +DateTimeUtils.formatCalendar(expire)) ;
         this.expires_in = expires_in;
     }
 

@@ -64,3 +64,22 @@ for pid in $(ps -ef | grep "some search" | awk '{print $2}'); do kill -9 $pid; d
 
 
 
+
+
+ny skjerm er kemkakorr2.local
+bruker og passord samme som alle andre
+
+Denne virker lovende
+https://github.com/robweber/omni-epd/blob/main/README.md
+
+Bra instrukser her
+https://github.com/jhirner/pi-frame/?tab=readme-ov-file
+
+
+installere node fant jeg her
+https://npm.io/package/justini
+
+NOdescript
+
+
+https://github.com/gnzzz/IT8951?tab=readme-ov-file

@@ -3,9 +3,12 @@ package no.infoskjermen.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -30,6 +33,18 @@ public class DateTimeUtils {
                 .toFormatter();
 
     }
+
+   public static String formatCalendar(Calendar calendar) {
+        // Henter datoen som et Date-objekt fra Calendar
+        Date date = calendar.getTime();
+
+        // Oppretter en formatter for dato og tid
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // Formaterer datoen til en streng
+        return dateFormat.format(date);
+    }
+
 
     public static LocalDateTime getYrDateTime(String value){
         return LocalDateTime.parse(value, DateTimeUtils.getEnturFormatter());

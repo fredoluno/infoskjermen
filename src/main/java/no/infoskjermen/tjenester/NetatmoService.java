@@ -6,6 +6,8 @@ import no.infoskjermen.data.Cache;
 import no.infoskjermen.data.NetatmoData;
 import no.infoskjermen.data.netatmo.NetatmoMeasure;
 import no.infoskjermen.data.netatmo.NetatmoToken;
+import no.infoskjermen.utils.DateTimeUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +124,8 @@ public class NetatmoService implements PopulateInterface {
         NetatmoToken token = (NetatmoToken)token2.get(navn);
 
         if (token != null && token.getAccess_token()!= null){
-            log.debug("token funnet");
+            log.debug("token funnet: "+ navn );
+            
             return token.getAccess_token();
         }
         MultiValueMap<String, String> parameters = getTokenParameters(navn);
@@ -133,6 +136,7 @@ public class NetatmoService implements PopulateInterface {
         settings.setNetatmoRefreshToken(navn,token.getRefresh_token());
         log.debug("access_token" + token.getExpire_in() +  " " +token.getAccess_token());
         token2.put(navn, token);
+        settings.clearCache(navn);
         return access_token;
     }
 
