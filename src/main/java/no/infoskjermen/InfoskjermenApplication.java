@@ -1,6 +1,7 @@
 package no.infoskjermen;
 
 
+import io.github.cdimascio.dotenv.Dotenv;
 import no.infoskjermen.data.NetatmoData;
 import no.infoskjermen.data.PublicTransportData;
 import no.infoskjermen.data.WeatherData;
@@ -45,6 +46,10 @@ public class InfoskjermenApplication {
 
 
 	public static void main(String[] args) {
+		// Load environment variables from .env file
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        // Optionally, you can access variables like:
+        // String creds = dotenv.get("GOOGLE_APPLICATION_CREDENTIALS");
 		SpringApplication.run(InfoskjermenApplication.class, args);
 	}
 

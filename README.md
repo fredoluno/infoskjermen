@@ -5,7 +5,8 @@ Java også
 Google cloud sdk
 
 
-for å kjøre må du ha miljøvariabl satt
+for å kjøre må du ha miljøvariabl satt. 
+Setter i en .env fil
 GOOGLE_APPLICATION_CREDENTIALS
 på min pc: C:\projects\gae\infoskjermen-d678e179a7f5.json
 C:\projects\gae\infoskjermen-3db0a1c6f5ca.json
