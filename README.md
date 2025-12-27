@@ -11,6 +11,7 @@ GOOGLE_APPLICATION_CREDENTIALS
 på min pc: C:\projects\gae\infoskjermen-d678e179a7f5.json
 C:\projects\gae\infoskjermen-3db0a1c6f5ca.json
 
+# TODO: Vurder å bruke Google Workload Identity Federation (WIF) for sikrere autentisering i stedet for service account-nøkkelfil. Se Google Cloud-dokumentasjon for oppsett.
 
 Kjøre appen lokalt
 mvn -DskipTests spring-boot:run

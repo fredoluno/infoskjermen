@@ -31,9 +31,12 @@ public class Settings {
     private void initiateDB(){
         if(this.db==null) {
             log.debug("start firestore");
-            FirestoreOptions fsOptions = FirestoreOptions.getDefaultInstance();
-            log.debug("default" + fsOptions.getDatabaseId());
-            Firestore db2 = FirestoreOptions.getDefaultInstance().getService();
+            // Create FirestoreOptions with explicit project ID
+            FirestoreOptions fsOptions = FirestoreOptions.newBuilder()
+                .setProjectId("infoskjermen")
+                .build();
+            log.debug("project: " + fsOptions.getProjectId() + ", database: " + fsOptions.getDatabaseId());
+            Firestore db2 = fsOptions.getService();
             log.debug("firestore koblet opp");
             this.db = db2;
         }
@@ -67,19 +70,36 @@ public class Settings {
 
     public HashMap getNetatmoSettings(String navn)throws Exception{
         log.debug("getNetatmoSettings : " + navn);
-        DocumentSnapshot doc  = hentSettings(navn);
-        HashMap map = (HashMap)doc.get("netatmo");
-        log.debug(DivUtils.printHashMap(map));
-        return  map;
+        try {
+            DocumentSnapshot doc  = hentSettings(navn);
+            HashMap map = (HashMap)doc.get("netatmo");
+            log.debug(DivUtils.printHashMap(map));
+            return  map;
+        } catch (Exception e) {
+            log.warn("Failed to get Netatmo settings from Firestore, using default settings: " + e.getMessage());
+            // Return default settings for development
+            HashMap defaultSettings = new HashMap();
+            defaultSettings.put("client_id", "default");
+            defaultSettings.put("client_secret", "default");
+            return defaultSettings;
+        }
     }
 
 
     public HashMap getDisplaySettings(String navn)throws Exception{
         log.debug("getDisplaySettings : " + navn);
-        DocumentSnapshot doc  = hentSettings(navn);
-        HashMap map = (HashMap)doc.get("display");
-        //log.debug(DivUtils.printHashMap(map));
-        return  map;
+        try {
+            DocumentSnapshot doc  = hentSettings(navn);
+            HashMap map = (HashMap)doc.get("display");
+            //log.debug(DivUtils.printHashMap(map));
+            return  map;
+        } catch (Exception e) {
+            log.warn("Failed to get Display settings from Firestore, using default settings: " + e.getMessage());
+            // Return default settings for development
+            HashMap defaultSettings = new HashMap();
+            defaultSettings.put("theme", "default");
+            return defaultSettings;
+        }
     }
 
 
@@ -87,26 +107,52 @@ public class Settings {
 
     public HashMap getGoogleSettings(String navn)throws Exception{
         log.debug("getGoogleSettings: " + navn);
-        DocumentSnapshot doc  = hentSettings(navn);
-        HashMap map = (HashMap) doc.get("google");
-        log.debug(DivUtils.printHashMap(map));
-        return  map;
+        try {
+            DocumentSnapshot doc  = hentSettings(navn);
+            HashMap map = (HashMap) doc.get("google");
+            log.debug(DivUtils.printHashMap(map));
+            return  map;
+        } catch (Exception e) {
+            log.warn("Failed to get Google settings from Firestore, using default settings: " + e.getMessage());
+            // Return default settings for development
+            HashMap defaultSettings = new HashMap();
+            defaultSettings.put("display_calendar", "primary");
+            defaultSettings.put("calendar", "primary");
+            return defaultSettings;
+        }
     }
 
     public HashMap getYrSettings(String navn)throws Exception{
         log.debug("getYrSettings: " + navn);
-        DocumentSnapshot doc  = hentSettings(navn);
-        HashMap map = (HashMap) doc.get("yr");
-        log.debug(DivUtils.printHashMap(map));
-        return  map;
+        try {
+            DocumentSnapshot doc  = hentSettings(navn);
+            HashMap map = (HashMap) doc.get("yr");
+            log.debug(DivUtils.printHashMap(map));
+            return  map;
+        } catch (Exception e) {
+            log.warn("Failed to get Yr settings from Firestore, using default settings: " + e.getMessage());
+            // Return default settings for development
+            HashMap defaultSettings = new HashMap();
+            defaultSettings.put("latitude", "59.9139");
+            defaultSettings.put("longitude", "10.7522");
+            return defaultSettings;
+        }
     }
 
     public HashMap getEnturSettings(String navn)throws Exception{
         log.debug("getEnturSettings: " + navn);
-        DocumentSnapshot doc  = hentSettings(navn);
-        HashMap map = (HashMap) doc.get("entur");
-        log.debug(DivUtils.printHashMap(map));
-        return  map;
+        try {
+            DocumentSnapshot doc  = hentSettings(navn);
+            HashMap map = (HashMap) doc.get("entur");
+            log.debug(DivUtils.printHashMap(map));
+            return  map;
+        } catch (Exception e) {
+            log.warn("Failed to get Entur settings from Firestore, using default settings: " + e.getMessage());
+            // Return default settings for development
+            HashMap defaultSettings = new HashMap();
+            defaultSettings.put("stopplace_id", "NSR:StopPlace:58366");
+            return defaultSettings;
+        }
     }
 
     public boolean setNetatmoRefreshToken(String navn, String refresh_token)throws Exception{

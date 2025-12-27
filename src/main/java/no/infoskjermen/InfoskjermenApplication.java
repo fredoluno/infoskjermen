@@ -48,8 +48,13 @@ public class InfoskjermenApplication {
 	public static void main(String[] args) {
 		// Load environment variables from .env file
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        // Optionally, you can access variables like:
-        // String creds = dotenv.get("GOOGLE_APPLICATION_CREDENTIALS");
+        
+        // Set Google Application Credentials from .env file to system property
+        String googleCredentials = dotenv.get("GOOGLE_APPLICATION_CREDENTIALS");
+        if (googleCredentials != null) {
+            System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", googleCredentials);
+        }
+        
 		SpringApplication.run(InfoskjermenApplication.class, args);
 	}
 
