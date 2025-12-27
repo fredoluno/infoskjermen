@@ -135,6 +135,11 @@
 					<release>21</release>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.2.0</version>  <!-- Compatible with Maven 3.6.0 -->
+			</plugin>
 
 		</plugins>
 
