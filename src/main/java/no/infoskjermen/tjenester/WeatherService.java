@@ -10,7 +10,6 @@ import no.infoskjermen.data.WeatherDataPeriod;
 import no.infoskjermen.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -98,7 +97,6 @@ public class WeatherService implements PopulateInterface {
 
 
 
-    @Autowired
     public WeatherService(Settings settings) {
         this.settings = settings;
         weatherReports = new Cache();
@@ -107,7 +105,7 @@ public class WeatherService implements PopulateInterface {
     }
     public String getURL(GeoPoint location){
 
-        return String.format(URL,""+location.getLatitude(),""+location.getLongitude());
+        return URL.formatted("" + location.getLatitude(), "" + location.getLongitude());
     }
 
     public WeatherData getWeatherReport(String navn) throws  Exception {

@@ -7,7 +7,6 @@ import no.infoskjermen.Settings;
 import no.infoskjermen.data.CalendarEvent;
 import no.infoskjermen.utils.DivUtils;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,6 @@ import java.util.TreeSet;
 public class CalendarService extends GoogleService implements PopulateInterface{
 
 
-    @Autowired
     public CalendarService(Settings settings) throws Exception{
         super(settings);
         log = LoggerFactory.getLogger(CalendarService.class);

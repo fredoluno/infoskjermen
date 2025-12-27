@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.13</version>
+		<version>3.3.13</version>
 		<relativePath/> <!-- lookup parent from repository -->
 </parent>
 	<groupId>no.infoskjermen</groupId>
@@ -127,7 +127,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>  <!-- Or a later version -->
+				<version>3.14.1</version>  <!-- Or a later version -->
 				<configuration>
 					<source>21</source>  <!-- Corresponds to Java 21 -->
 					<target>21</target>  <!-- Corresponds to Java 21 -->
