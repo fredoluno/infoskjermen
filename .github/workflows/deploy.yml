@@ -23,8 +23,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-m2-v2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-v2
         
     - name: Build application
       run: ./mvnw clean compile test-compile
@@ -65,7 +65,7 @@ jobs:
     - name: Deploy to App Engine
       run: |
         gcloud config set project infoskjermen
-        ./mvnw appengine:deploy -DskipTests
+        ./mvnw appengine:deploy -DskipTests -Dapp.deploy.projectId=infoskjermen
         
     - name: Verify deployment
       run: |
