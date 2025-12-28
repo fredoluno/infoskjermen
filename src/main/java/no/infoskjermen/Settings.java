@@ -7,6 +7,7 @@ import com.google.cloud.firestore.FirestoreOptions;
 import no.infoskjermen.utils.DivUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,7 +21,8 @@ public class Settings {
     private Firestore db;
     private HashMap<String, DocumentSnapshot> userProfiles;
 
-  
+    @Value("${google.cloud.firestore.project-id:infoskjermen}")
+    private String projectId;
     
 
     Settings(){
@@ -34,7 +36,7 @@ public class Settings {
             
             try {
                 FirestoreOptions.Builder builder = FirestoreOptions.newBuilder()
-                    .setProjectId("infoskjermen");
+                    .setProjectId(projectId);
                 
                 // Use default credential chain which will pick up environment variables
                 

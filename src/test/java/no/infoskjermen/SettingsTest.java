@@ -44,7 +44,7 @@ public class SettingsTest {
         
         // When Firestore is unavailable, Settings returns default calendar
         assertThat(map).isNotNull();
-        assertThat(map.get("calendar")).isEqualTo("minkalender");
+        assertThat(map.get("calendar")).isEqualTo("primary");
         
     }
 
@@ -90,7 +90,7 @@ public class SettingsTest {
         // Test that we can get general Google settings (these have defaults)
         HashMap generalGoogle = settings.getGoogleSettings("testSetting");
         assertThat(generalGoogle).isNotNull();
-        assertThat(generalGoogle.get("calendar")).isEqualTo("minkalender");
+        assertThat(generalGoogle.get("calendar")).isEqualTo("primary");
         
         // Test that we can get general Entur settings  
         HashMap generalEntur = settings.getEnturSettings("general");
