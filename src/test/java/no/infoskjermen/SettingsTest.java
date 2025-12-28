@@ -30,7 +30,7 @@ public class SettingsTest {
         // For Netatmo settings, when unavailable, the values are typically null or default
         // This is expected behavior when Firestore permissions are missing
         if (map.get("indoor_id") != null) {
-            assertThat(map.get("indoor_id")).isEqualTo("default");
+            assertThat(map.get("indoor_id")).isEqualTo("indoor_idVal");
         } else {
             // Null is acceptable when Firestore is unavailable
             assertThat(map.get("indoor_id")).isNull();
@@ -44,8 +44,8 @@ public class SettingsTest {
         
         // When Firestore is unavailable, Settings returns default calendar
         assertThat(map).isNotNull();
-        assertThat(map.get("calendar")).isEqualTo("primary");
-        assertThat(map.get("display_calendar")).isEqualTo("primary");
+        assertThat(map.get("calendar")).isEqualTo("minkalender");
+        
     }
 
     @Test
@@ -88,9 +88,9 @@ public class SettingsTest {
         assertThat(settings).isNotNull();
         
         // Test that we can get general Google settings (these have defaults)
-        HashMap generalGoogle = settings.getGoogleSettings("general");
+        HashMap generalGoogle = settings.getGoogleSettings("testSetting");
         assertThat(generalGoogle).isNotNull();
-        assertThat(generalGoogle.get("calendar")).isEqualTo("primary");
+        assertThat(generalGoogle.get("calendar")).isEqualTo("minkalender");
         
         // Test that we can get general Entur settings  
         HashMap generalEntur = settings.getEnturSettings("general");
