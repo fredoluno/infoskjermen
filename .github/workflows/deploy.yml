@@ -36,16 +36,17 @@ jobs:
       
     - name: Run integration tests with emulator
       run: |
-        # Install Firestore emulator
-        gcloud components install cloud-firestore-emulator --quiet
-        # Start emulator in background
-        gcloud beta emulators firestore start --host-port=localhost:8080 &
+        # Install Firestore emulator using apt-get (required for GitHub Actions)
+        sudo apt-get update
+        sudo apt-get install -y google-cloud-cli-firestore-emulator
+        # Start emulator in background  
+        gcloud beta emulators firestore start --host-port=localhost:8181 &
         # Wait for emulator to be ready
         sleep 10
         # Run integration tests
         ./mvnw test -Dtest="FirestoreIntegrationTest" || echo "Integration tests skipped - no credentials"
       env:
-        FIRESTORE_EMULATOR_HOST: localhost:8080
+        FIRESTORE_EMULATOR_HOST: localhost:8181
         FIRESTORE_INTEGRATION_ENABLED: true
       continue-on-error: true  # Integration tests are optional
       
