@@ -26,8 +26,14 @@ Choose one of these authentication methods:
 
 #### Option 1: Firestore Emulator (Recommended for CI/CD)
 ```bash
-# Install and start the emulator
+# Install the emulator (choose based on your environment):
+# For CI/CD (Ubuntu/Debian):
+sudo apt-get install -y google-cloud-cli-firestore-emulator
+
+# For local development (if gcloud CLI allows):
 gcloud components install cloud-firestore-emulator
+
+# Start the emulator
 gcloud beta emulators firestore start --host-port=localhost:8080
 
 # Set environment variable
@@ -164,7 +170,8 @@ For continuous integration, use the Firestore emulator:
 # Example GitHub Actions
 - name: Start Firestore Emulator
   run: |
-    gcloud components install cloud-firestore-emulator
+    sudo apt-get update
+    sudo apt-get install -y google-cloud-cli-firestore-emulator
     gcloud beta emulators firestore start --host-port=localhost:8080 &
     
 - name: Run Integration Tests
