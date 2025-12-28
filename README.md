@@ -83,6 +83,8 @@ The application uses Google Firestore for configuration storage. Settings are or
 
 ## Development
 
+> **Note for AI Assistants and Developers**: This project follows specific coding standards defined in [CODING-STANDARDS.md](CODING-STANDARDS.md). Please review and follow these standards for all code changes, including package structure, Spring Boot patterns, naming conventions, and Git workflow.
+
 ### Building
 ```bash
 ./mvnw clean compile
