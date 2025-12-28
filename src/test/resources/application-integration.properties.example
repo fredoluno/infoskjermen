@@ -1,0 +1,52 @@
+# Firestore Integration Test Configuration
+# Copy this file to application-integration.properties and customize for your environment
+
+# Set this to true to enable Firestore integration tests
+# FIRESTORE_INTEGRATION_ENABLED=true
+
+# Option 1: Use Firestore Emulator (recommended for CI/CD)
+# Start emulator with: gcloud beta emulators firestore start --host-port=localhost:8080
+# Then set: FIRESTORE_EMULATOR_HOST=localhost:8080
+
+# Option 2: Use Service Account Key (for local testing)
+# Set environment variable: GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+
+# Option 3: Use Application Default Credentials (for local development)
+# Run: gcloud auth application-default login
+
+# Test project configuration
+google.cloud.firestore.project-id=infoskjermen-test
+
+# Logging configuration for integration tests
+logging.level.no.infoskjermen.integration=DEBUG
+logging.level.no.infoskjermen.Settings=DEBUG
+
+# Test data configuration
+integration.test.user=integration-test-user
+integration.test.cleanup=true
+
+# Test settings document structure for Firestore:
+# {
+#   "settings": {
+#     "general": {
+#       "google": {
+#         "calendar": "primary",
+#         "display_calendar": "primary"
+#       },
+#       "netatmo": {
+#         "client_id": "your-netatmo-client-id",
+#         "client_secret": "your-netatmo-client-secret"
+#       },
+#       "entur": {
+#         "stopplace_id": "NSR:StopPlace:58366"
+#       },
+#       "yr": {
+#         "latitude": "59.9139",
+#         "longitude": "10.7522"
+#       },
+#       "display": {
+#         "theme": "default"
+#       }
+#     }
+#   }
+# }
