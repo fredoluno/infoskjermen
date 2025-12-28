@@ -28,7 +28,10 @@ Choose one of these authentication methods:
 ```bash
 # Install the emulator (choose based on your environment):
 # For CI/CD (Ubuntu/Debian):
-sudo apt-get install -y google-cloud-cli-firestore-emulator
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y google-cloud-sdk-firestore-emulator
 
 # For local development (if gcloud CLI allows):
 gcloud components install cloud-firestore-emulator
@@ -170,8 +173,10 @@ For continuous integration, use the Firestore emulator:
 # Example GitHub Actions
 - name: Start Firestore Emulator
   run: |
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
     sudo apt-get update
-    sudo apt-get install -y google-cloud-cli-firestore-emulator
+    sudo apt-get install -y google-cloud-sdk-firestore-emulator
     gcloud beta emulators firestore start --host-port=localhost:8080 &
     
 - name: Run Integration Tests

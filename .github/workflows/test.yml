@@ -46,9 +46,11 @@ jobs:
         
     - name: Setup Firestore Emulator and run integration tests
       run: |
-        # Install and start Firestore emulator
+        # Install Google Cloud SDK and Firestore emulator
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install -y google-cloud-cli-firestore-emulator
+        sudo apt-get install -y google-cloud-sdk-firestore-emulator
         gcloud beta emulators firestore start --host-port=localhost:8080 &
         
         # Wait for emulator to be ready
