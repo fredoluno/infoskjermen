@@ -51,8 +51,8 @@ jobs:
         
     - name: Setup Firestore Emulator and run integration tests
       run: |
-        # Install Firestore emulator component
-        gcloud components install cloud-firestore-emulator --quiet
+        # Install required components with quiet flag
+        gcloud components install beta cloud-firestore-emulator --quiet
         gcloud beta emulators firestore start --host-port=localhost:8080 &
         
         # Wait for emulator to be ready

@@ -33,7 +33,7 @@ Choose one of these authentication methods:
 #   uses: google-github-actions/setup-gcloud@v2
 
 # For local development:
-gcloud components install cloud-firestore-emulator
+gcloud components install beta cloud-firestore-emulator
 
 # Start the emulator
 gcloud beta emulators firestore start --host-port=localhost:8080
@@ -177,7 +177,7 @@ For continuous integration, use the Firestore emulator:
 
 - name: Start Firestore Emulator
   run: |
-    gcloud components install cloud-firestore-emulator --quiet
+    gcloud components install beta cloud-firestore-emulator --quiet
     gcloud beta emulators firestore start --host-port=localhost:8080 &
     
 - name: Run Integration Tests
