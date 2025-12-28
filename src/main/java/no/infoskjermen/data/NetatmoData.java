@@ -16,13 +16,13 @@ public class NetatmoData {
 
 
     public NetatmoData(NetatmoMeasure indoorMeasure, NetatmoMeasure outsideMeasure) {
-        indoorTemperature = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(0).intValue());
-        indoorHumidity = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(2).intValue());
-        outdoorTemperature = new Integer(outsideMeasure.getBody().get(0).getValue().get(0).get(0).intValue());;
-        outdoorHumidity = new Integer(outsideMeasure.getBody().get(0).getValue().get(0).get(1).intValue());;
-        co2 = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(1).intValue());;
-        noise = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(4).intValue());
-        pressure = new Integer(indoorMeasure.getBody().get(0).getValue().get(0).get(3).intValue());;
+        indoorTemperature = Integer.valueOf(indoorMeasure.getBody().get(0).getValue().get(0).get(0).intValue());
+        indoorHumidity = Integer.valueOf(indoorMeasure.getBody().get(0).getValue().get(0).get(2).intValue());
+        outdoorTemperature = Integer.valueOf(outsideMeasure.getBody().get(0).getValue().get(0).get(0).intValue());;
+        outdoorHumidity = Integer.valueOf(outsideMeasure.getBody().get(0).getValue().get(0).get(1).intValue());;
+        co2 = Integer.valueOf(indoorMeasure.getBody().get(0).getValue().get(0).get(1).intValue());;
+        noise = Integer.valueOf(indoorMeasure.getBody().get(0).getValue().get(0).get(4).intValue());
+        pressure = Integer.valueOf(indoorMeasure.getBody().get(0).getValue().get(0).get(3).intValue());;
 
 
     }

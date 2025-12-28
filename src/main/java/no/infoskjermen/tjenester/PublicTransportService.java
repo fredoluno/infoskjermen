@@ -6,7 +6,6 @@ import no.infoskjermen.utils.DateTimeUtils;
 import no.infoskjermen.utils.DivUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ public class PublicTransportService  implements PopulateInterface{
     private HashMap generalSettings;
 
 
-    @Autowired
     public PublicTransportService(Settings settings) throws Exception{
         this.settings = settings;
         generalSettings = settings.getEnturSettings("general");

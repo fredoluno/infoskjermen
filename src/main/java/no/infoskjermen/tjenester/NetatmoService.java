@@ -10,7 +10,6 @@ import no.infoskjermen.utils.DateTimeUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -47,7 +46,6 @@ public class NetatmoService implements PopulateInterface {
     private Cache data;
     private final long expireTime = 2 * 60 * 1000;
 
-    @Autowired
     public NetatmoService(Settings settings){
         this.settings = settings;
         token2 = new HashMap();
