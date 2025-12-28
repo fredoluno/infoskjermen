@@ -31,19 +31,26 @@ public class Settings {
     private void initiateDB(){
         if(this.db==null) {
             log.debug("start firestore");
-            // Create FirestoreOptions with explicit project ID
-            FirestoreOptions fsOptions = FirestoreOptions.newBuilder()
-                .setProjectId("infoskjermen")
-                .build();
-            log.debug("project: " + fsOptions.getProjectId() + ", database: " + fsOptions.getDatabaseId());
-            Firestore db2 = fsOptions.getService();
-            log.debug("firestore koblet opp");
-            this.db = db2;
+            
+            try {
+                FirestoreOptions.Builder builder = FirestoreOptions.newBuilder()
+                    .setProjectId("infoskjermen");
+                
+                // Use default credential chain which will pick up environment variables
+                
+                FirestoreOptions fsOptions = builder.build();
+                log.debug("project: " + fsOptions.getProjectId() + ", database: " + fsOptions.getDatabaseId());
+                Firestore db2 = fsOptions.getService();
+                log.debug("firestore koblet opp");
+                this.db = db2;
+            } catch (Exception e) {
+                log.error("Failed to initialize Firestore: " + e.getMessage());
+                throw new RuntimeException("Could not initialize Firestore", e);
+            }
         }
         else{
             log.debug("db allerede satt opp");
         }
-
     }
 
     public void clearCache(String navn){
