@@ -3,6 +3,8 @@ package no.infoskjermen.utils;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,7 +74,8 @@ public class DateTimeUtilsTest {
 
     @Test
     public void testPublicTransportView(){
-        LocalDateTime dateToTest = LocalDateTime.now();
+        // Use Oslo timezone to match the method implementation
+        LocalDateTime dateToTest = ZonedDateTime.now(ZoneId.of("Europe/Oslo")).toLocalDateTime();
         assertThat(Integer.parseInt(DateTimeUtils.getPublicTransportView(dateToTest.plusMinutes(5).plusSeconds(1)))).isEqualTo(5);
         assertThat(DateTimeUtils.getPublicTransportView(dateToTest.plusMinutes(121).plusSeconds(1))).contains(":");
         assertThat(DateTimeUtils.getPublicTransportView(dateToTest.plusHours(24).plusSeconds(1))).contains("timer");
