@@ -145,6 +145,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M9</version>  <!-- Compatible with Maven 3.6.0 -->
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.2</version>  <!-- Compatible with Maven 3.6.0 -->
+			</plugin>
 
 		</plugins>
 
