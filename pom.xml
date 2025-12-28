@@ -122,6 +122,9 @@
 				<version>2.8.0</version>
 				<configuration>
 					<version>1</version>
+					<deploy>
+						<projectId>infoskjermen</projectId>
+					</deploy>
 				</configuration>
 			</plugin>
 			<plugin>
