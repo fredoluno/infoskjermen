@@ -58,45 +58,58 @@ public class NetatmoDataTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenIndoorMeasureIsNull() {
+    public void shouldHandleNullIndoorMeasure() {
         // Given
         setupValidOutdoorMeasure();
 
-        // When/Then
-        assertThatThrownBy(() -> new NetatmoData(null, outdoorMeasure, null, null))
-                .isInstanceOf(NullPointerException.class);
+        // When
+        NetatmoData netatmoData = new NetatmoData(null, outdoorMeasure, null, null);
+
+        // Then
+        assertThat(netatmoData.indoorTemperature).isNull();
+        assertThat(netatmoData.indoorHumidity).isNull();
+        assertThat(netatmoData.outdoorTemperature).isEqualTo(15);
     }
 
     @Test
-    public void shouldThrowExceptionWhenOutdoorMeasureIsNull() {
+    public void shouldHandleNullOutdoorMeasure() {
         // Given
         setupValidIndoorMeasure();
 
-        // When/Then
-        assertThatThrownBy(() -> new NetatmoData(indoorMeasure, null, null, null))
-                .isInstanceOf(NullPointerException.class);
+        // When
+        NetatmoData netatmoData = new NetatmoData(indoorMeasure, null, null, null);
+
+        // Then
+        assertThat(netatmoData.indoorTemperature).isEqualTo(22);
+        assertThat(netatmoData.outdoorTemperature).isNull();
     }
 
     @Test
-    public void shouldThrowExceptionWhenIndoorMeasureHasNoBody() {
+    public void shouldHandleEmptyIndoorBody() {
         // Given
         indoorMeasure.setBody(new ArrayList<>());
         setupValidOutdoorMeasure();
 
-        // When/Then
-        assertThatThrownBy(() -> new NetatmoData(indoorMeasure, outdoorMeasure, null, null))
-                .isInstanceOf(IndexOutOfBoundsException.class);
+        // When
+        NetatmoData netatmoData = new NetatmoData(indoorMeasure, outdoorMeasure, null, null);
+
+        // Then
+        assertThat(netatmoData.indoorTemperature).isNull();
+        assertThat(netatmoData.outdoorTemperature).isEqualTo(15);
     }
 
     @Test
-    public void shouldThrowExceptionWhenOutdoorMeasureHasNoBody() {
+    public void shouldHandleEmptyOutdoorBody() {
         // Given
         setupValidIndoorMeasure();
         outdoorMeasure.setBody(new ArrayList<>());
 
-        // When/Then
-        assertThatThrownBy(() -> new NetatmoData(indoorMeasure, outdoorMeasure, null, null))
-                .isInstanceOf(IndexOutOfBoundsException.class);
+        // When
+        NetatmoData netatmoData = new NetatmoData(indoorMeasure, outdoorMeasure, null, null);
+
+        // Then
+        assertThat(netatmoData.indoorTemperature).isEqualTo(22);
+        assertThat(netatmoData.outdoorTemperature).isNull();
     }
 
     @Test
