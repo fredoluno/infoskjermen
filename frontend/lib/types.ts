@@ -28,6 +28,11 @@ export interface NetatmoData {
   pressure?: string;
   co2?: string;
   noise?: string;
+  rain?: number; // Backend sends Double/Integer
+  windStrength?: number;
+  windAngle?: number;
+  gustStrength?: number;
+  gustAngle?: number;
 }
 
 export interface WeatherData {
@@ -37,6 +42,7 @@ export interface WeatherData {
     symbol?: string;
     period?: string;
   };
+  today?: WeatherForecast; // Valid WeatherForecast object for 'today'
   forecast?: WeatherForecast[];
 }
 

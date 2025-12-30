@@ -111,44 +111,99 @@ export default function SmartDisplay({ data, mode }: Props) {
                     </div>
                 </div>
 
-                {/* Right Column: Weather & Sensors */}
+                {/* Right Column: Outdoor Environment & Weather */}
                 <div className="col-span-1 flex flex-col gap-6">
-                    <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl">
-                        <h2 className="flex items-center gap-2 text-xl font-bold mb-4 text-slate-200">
-                            <Cloud className="w-6 h-6 text-blue-300" /> Været nå
-                        </h2>
-                        <div className="flex items-center justify-between">
-                            <span className="text-6xl font-bold">{data.weather.current?.temperature}°</span>
-                            <span className="text-xl text-slate-300">{data.weather.current?.symbol}</span>
-                        </div>
-                        {data.netatmo.outdoorHumidity && (
-                            <div className="mt-4 flex gap-4 text-sm text-slate-400">
-                                <span>💧 {data.netatmo.outdoorHumidity}%</span>
-                                <span>💨 {data.netatmo.outdoorTemperature}°C (Netatmo)</span>
-                            </div>
-                        )}
-                    </div>
 
-                    <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl flex-1">
-                        <h2 className="text-sm uppercase tracking-widest text-slate-400 mb-4">Inneklima</h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-3 bg-white/5 rounded-xl">
-                                <span className="block text-2xl font-bold">{data.netatmo.indoorTemperature}°</span>
-                                <span className="text-xs text-slate-500">Stue</span>
+                    {/* Module 1: Utemiljø (Actual Sensors) */}
+                    <div className="bg-gradient-to-br from-emerald-500/20 to-teal-500/20 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl">
+                        <h2 className="flex items-center gap-2 text-xl font-bold mb-4 text-slate-200">
+                            <Wind className="w-6 h-6 text-emerald-300" /> Utemiljø
+                        </h2>
+
+                        {/* Main Sensor: Temperature */}
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex flex-col">
+                                <span className="text-sm text-slate-400 uppercase tracking-widest">Temperatur</span>
+                                <span className="text-6xl font-bold">{data.netatmo.outdoorTemperature}°</span>
                             </div>
+                            {/* Rain (if available) */}
+                            {data.netatmo.rain !== undefined && (
+                                <div className="flex flex-col items-end">
+                                    <span className="text-sm text-slate-400 uppercase tracking-widest">Regn</span>
+                                    <span className="text-4xl font-bold text-blue-300">{data.netatmo.rain} mm</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Secondary Sensors: Wind & Humidity */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {data.netatmo.windStrength !== undefined && (
+                                <div className="p-3 bg-white/5 rounded-xl">
+                                    <span className="block text-2xl font-bold">{data.netatmo.windStrength} <span className="text-sm font-normal text-slate-400">km/h</span></span>
+                                    <span className="text-xs text-slate-500">Vind ({data.netatmo.windAngle}°)</span>
+                                </div>
+                            )}
                             <div className="p-3 bg-white/5 rounded-xl">
-                                <span className="block text-2xl font-bold">{data.netatmo.indoorHumidity}%</span>
+                                <span className="block text-2xl font-bold">{data.netatmo.outdoorHumidity}%</span>
                                 <span className="text-xs text-slate-500">Fuktighet</span>
                             </div>
-                            <div className="p-3 bg-white/5 rounded-xl">
-                                <span className="block text-2xl font-bold">{data.netatmo.co2}</span>
-                                <span className="text-xs text-slate-500">CO2</span>
-                            </div>
-                            <div className="p-3 bg-white/5 rounded-xl">
-                                <span className="block text-2xl font-bold">{data.netatmo.noise}</span>
-                                <span className="text-xs text-slate-500">dB</span>
-                            </div>
                         </div>
+                    </div>
+
+                    {/* Module 2: Weather Forecast (Yr) */}
+                    <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl flex-1">
+                        <h2 className="flex items-center gap-2 text-xl font-bold mb-4 text-slate-200">
+                            <Cloud className="w-6 h-6 text-blue-300" /> Værmelding
+                        </h2>
+
+                        {/* Today's Forecast (Parts) */}
+                        {data.weather.today && data.weather.today.periods && (
+                            <div className="mb-6">
+                                <h3 className="text-sm text-slate-400 uppercase mb-2">I dag</h3>
+                                <div className="grid grid-cols-4 gap-2 text-center">
+                                    {data.weather.today.periods.morning && (
+                                        <div className="bg-white/5 rounded-lg p-2">
+                                            <div className="text-xs text-slate-400">Morgen</div>
+                                            <div className="font-bold">{data.weather.today.periods.morning.temperature}°</div>
+                                        </div>
+                                    )}
+                                    {data.weather.today.periods.day && (
+                                        <div className="bg-white/5 rounded-lg p-2">
+                                            <div className="text-xs text-slate-400">Dag</div>
+                                            <div className="font-bold">{data.weather.today.periods.day.temperature}°</div>
+                                        </div>
+                                    )}
+                                    {data.weather.today.periods.evening && (
+                                        <div className="bg-white/5 rounded-lg p-2">
+                                            <div className="text-xs text-slate-400">Kveld</div>
+                                            <div className="font-bold">{data.weather.today.periods.evening.temperature}°</div>
+                                        </div>
+                                    )}
+                                    {data.weather.today.periods.night && (
+                                        <div className="bg-white/5 rounded-lg p-2">
+                                            <div className="text-xs text-slate-400">Natt</div>
+                                            <div className="font-bold">{data.weather.today.periods.night.temperature}°</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Tomorrow's Forecast */}
+                        {data.weather.forecast && data.weather.forecast.length > 0 && (
+                            <div>
+                                <h3 className="text-sm text-slate-400 uppercase mb-2">I morgen ({data.weather.forecast[0].date})</h3>
+                                <div className="flex items-center justify-between bg-white/5 rounded-xl p-3">
+                                    <div className="flex gap-4">
+                                        {data.weather.forecast[0].periods.day ? (
+                                            <div className="text-2xl font-bold">{data.weather.forecast[0].periods.day.temperature}° <span className="text-sm font-normal text-slate-400">{data.weather.forecast[0].periods.day.symbol}</span></div>
+                                        ) : (
+                                            <span className="text-slate-500">Ingen data</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

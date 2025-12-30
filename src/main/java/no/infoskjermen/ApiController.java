@@ -138,6 +138,11 @@ public class ApiController {
             netatmoData.put("pressure", data.pressure);
             netatmoData.put("co2", data.co2);
             netatmoData.put("noise", data.noise);
+            netatmoData.put("rain", data.rain);
+            netatmoData.put("windStrength", data.windStrength);
+            netatmoData.put("windAngle", data.windAngle);
+            netatmoData.put("gustStrength", data.gustStrength);
+            netatmoData.put("gustAngle", data.gustAngle);
 
             response.put("data", netatmoData);
 
@@ -192,6 +197,12 @@ public class ApiController {
                     current.put("symbol", weatherData.main.night.symbol);
                     current.put("period", "night");
                 }
+            }
+            if (weatherData.main != null) {
+                // ... (existing current period logic) ...
+
+                // Expose the full day structure for today
+                response.put("today", mapWeatherDayToJson(weatherData.main));
             }
             response.put("current", current);
 
