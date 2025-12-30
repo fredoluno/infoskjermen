@@ -20,6 +20,8 @@ A Spring Boot application that displays information on a screen, including calen
 - Java 21 (Eclipse Adoptium JDK recommended)
 - Maven (included via Maven Wrapper)
 - Google Cloud Service Account credentials
+- **Node.js 18+** (for frontend development)
+- **npm or yarn** (for frontend package management)
 
 ## Setup
 
@@ -63,13 +65,67 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "C:/projects/gae/infoskjermen-dc2c58d96b3b
 ./mvnw spring-boot:run
 ```
 
+## Frontend Application
+
+The project includes a modern Next.js frontend application located in the `frontend/` directory. The frontend provides a smart display interface that consumes data from the backend API.
+
+### Frontend Features
+
+- **Smart Display Interface**: A comprehensive dashboard showing calendar events, weather data, Netatmo sensor readings, and AI-prioritized information
+- **Dual Display Modes**: 
+  - Color mode for regular displays
+  - Grayscale mode optimized for e-ink displays
+- **Real-time Updates**: Live clock and data refresh every minute
+- **Responsive Design**: Built with Tailwind CSS and TypeScript
+- **AI-Powered Prioritization**: Displays AI-summarized content and focus areas
+
+### Setting up the Frontend
+
+1. **Navigate to the frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Access the frontend**
+   - Development server: http://localhost:3000
+   - Add query parameters:
+     - `?mode=grayscale` for e-ink display optimization
+     - `?id=your_user_id` to specify user (defaults to '65a75e2e')
+
+### Frontend API Integration
+
+The frontend communicates with the backend through REST API endpoints:
+- **Smart Display API**: `GET /api/v1/{userId}/smart-display` - Aggregated data with AI prioritization
+- **Base URL**: Configurable in `lib/api.ts` (defaults to http://localhost:8080/api/v1)
+
+### Development Workflow
+
+For full-stack development:
+1. Start the backend: `./run-with-env.ps1` (runs on port 8080)
+2. Start the frontend: `cd frontend && npm run dev` (runs on port 3000)
+3. Frontend will automatically proxy API calls to the backend
+
 ## Accessing the Application
 
-Once started, the application will be available at:
-- Main page: http://localhost:8080
-- Calendar endpoint: http://localhost:8080/calendar/fredrik
-- Weather endpoint: http://localhost:8080/weather/fredrik
-- Kindle endpoint: http://localhost:8080/kindle/fredrik
+### Backend Endpoints
+Once the backend is started, it will be available at:
+- API Base: http://localhost:8080/api/v1
+- Smart Display API: http://localhost:8080/api/v1/{userId}/smart-display
+- Legacy endpoints: http://localhost:8080/calendar/fredrik, http://localhost:8080/weather/fredrik, etc.
+
+### Frontend Access
+- Development: http://localhost:3000
+- Production build: `npm run build && npm run start`
 
 ## Configuration
 
@@ -86,13 +142,29 @@ The application uses Google Firestore for configuration storage. Settings are or
 > **Note for AI Assistants and Developers**: This project follows specific coding standards defined in [CODING-STANDARDS.md](CODING-STANDARDS.md). Please review and follow these standards for all code changes, including package structure, Spring Boot patterns, naming conventions, and Git workflow.
 
 ### Building
+
+#### Backend
 ```bash
 ./mvnw clean compile
 ```
 
+#### Frontend
+```bash
+cd frontend
+npm run build
+```
+
 ### Running tests
+
+#### Backend
 ```bash
 ./mvnw test
+```
+
+#### Frontend
+```bash
+cd frontend
+npm run lint
 ```
 
 ### Creating a JAR
@@ -102,22 +174,37 @@ The application uses Google Firestore for configuration storage. Settings are or
 
 ## Architecture
 
-The application follows a Spring Boot architecture with:
+The application follows a modern full-stack architecture:
 
-- **Controllers**: REST endpoints in `InfoskjermenApplication`
+### Backend (Spring Boot)
+- **Controllers**: REST endpoints in `ApiController` for frontend integration, legacy controllers in `InfoskjermenApplication`
 - **Services**: Business logic in `tjenester` package
 - **Data Models**: DTOs in `data` package
 - **Configuration**: Firestore settings management in `Settings` class
 - **Utilities**: Helper classes in `utils` package
 
+### Frontend (Next.js)
+- **Components**: React components in `components/` directory
+- **API Layer**: TypeScript API client in `lib/api.ts`
+- **Types**: TypeScript interfaces in `lib/types.ts`
+- **Pages**: Next.js App Router pages in `app/` directory
+- **Styling**: Tailwind CSS with custom e-ink display optimizations
+
 ## Dependencies
 
+### Backend Dependencies
 Key dependencies include:
 - Spring Boot 3.4.1
 - Google Cloud Firestore
 - Google API Client Libraries
 - dotenv-java (for environment variable management)
 - Various HTTP and JSON processing libraries
+
+### Frontend Dependencies
+- Next.js 16.1.1 with React 19.2.3
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Lucide React for icons
 
 ## Troubleshooting
 
