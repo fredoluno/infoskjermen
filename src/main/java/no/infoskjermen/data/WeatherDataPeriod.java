@@ -4,16 +4,19 @@ import java.time.LocalDate;
 
 public class WeatherDataPeriod {
 
-
-
     public int temperature;
     public String symbol;
     public LocalDate date;
     public String period;
 
-    public String debug(){
+    // Wind data from Yr
+    public Double windSpeed; // m/s
+    public String windDirection; // e.g. "N" or degrees
 
-        return "WeatherDataPeriod - temperature=" + temperature + " symbol=" + symbol + " date=" + date+ " period=" +period ;
+    public String debug() {
+
+        return "WeatherDataPeriod - temperature=" + temperature + " symbol=" + symbol + " date=" + date + " period="
+                + period;
 
     }
 

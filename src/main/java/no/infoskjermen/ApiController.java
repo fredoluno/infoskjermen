@@ -19,7 +19,8 @@ import java.util.Map;
 
 /**
  * REST API Controller for providing JSON data services to React frontend.
- * Handles requests for calendar, weather, and netatmo data based on user identifier (navn).
+ * Handles requests for calendar, weather, and netatmo data based on user
+ * identifier (navn).
  * 
  * Base path: /api/v1
  * All endpoints return JSON responses suitable for React consumption.
@@ -34,20 +35,82 @@ public class ApiController {
     private final NetatmoService netatmoService;
     private final WeatherService weatherService;
     private final CalendarService calendarService;
+    private final no.infoskjermen.tjenester.AiPrioritizationService aiPrioritizationService;
 
     /**
      * Constructor injection following coding standards.
      * 
-     * @param netatmoService Service for Netatmo sensor data
-     * @param weatherService Service for weather information  
-     * @param calendarService Service for calendar events
+     * @param netatmoService          Service for Netatmo sensor data
+     * @param weatherService          Service for weather information
+     * @param calendarService         Service for calendar events
+     * @param aiPrioritizationService Service for AI prioritization
      */
-    public ApiController(NetatmoService netatmoService, 
-                        WeatherService weatherService,
-                        CalendarService calendarService) {
+    public ApiController(NetatmoService netatmoService,
+            WeatherService weatherService,
+            CalendarService calendarService,
+            no.infoskjermen.tjenester.AiPrioritizationService aiPrioritizationService) {
         this.netatmoService = netatmoService;
         this.weatherService = weatherService;
         this.calendarService = calendarService;
+        this.aiPrioritizationService = aiPrioritizationService;
+    }
+
+    /**
+     * Get smart display data (Aggregated + AI Prioritized).
+     * 
+     * @param navn User identifier
+     * @return JSON response with prioritized content and raw data
+     */
+    @GetMapping("/{navn}/smart-display")
+    public ResponseEntity<Map<String, Object>> getSmartDisplay(@PathVariable String navn) {
+        log.info("Fetching smart display data for user: {}", navn);
+
+        try {
+            // 1. Fetch all raw data
+            // Note: In production we might want to run these in parallel
+            NetatmoData netatmoData = netatmoService.getNetatmoData(navn);
+            WeatherData weatherData = weatherService.getWeatherReport(navn);
+            var calendarEvents = calendarService.getCalendarEvents(navn);
+
+            // 2. Prepare Context for AI
+            Map<String, Object> context = new HashMap<>();
+            context.put("netatmo", netatmoData);
+
+            // Simplify weather for AI context to save tokens
+            Map<String, Object> weatherContext = new HashMap<>();
+            if (weatherData.main != null && weatherData.main.day != null) {
+                weatherContext.put("today", weatherData.main.day);
+            }
+            context.put("weather", weatherContext);
+
+            // Simplify calendar
+            context.put("calendar_count", calendarEvents.size());
+            if (!calendarEvents.isEmpty()) {
+                context.put("next_event", calendarEvents.first().title + " at " + calendarEvents.first().printDato());
+            }
+
+            // 3. Call AI
+            Map<String, Object> aiPriority = aiPrioritizationService.prioritizeContent(context);
+
+            // 4. Construct Response
+            Map<String, Object> response = new HashMap<>();
+            response.put("navn", navn);
+            response.put("timestamp", LocalDateTime.now().format(ISO_FORMATTER));
+
+            response.put("ai_priority", aiPriority);
+
+            // Raw Data Sections
+            response.put("netatmo", getNetatmoData(navn).getBody().get("data")); // Reuse existing logic logic
+            response.put("weather", getWeatherData(navn).getBody());
+            response.put("calendar", getCalendarEvents(navn).getBody());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("Failed to fetch smart display data", e);
+            return ResponseEntity.internalServerError()
+                    .body(createErrorResponse(navn, "Failed to retrieve smart display data", e.getMessage()));
+        }
     }
 
     /**
@@ -59,14 +122,14 @@ public class ApiController {
     @GetMapping("/{navn}/netatmo")
     public ResponseEntity<Map<String, Object>> getNetatmoData(@PathVariable String navn) {
         log.info("Fetching Netatmo data for user: {}", navn);
-        
+
         try {
             NetatmoData data = netatmoService.getNetatmoData(navn);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("navn", navn);
             response.put("timestamp", LocalDateTime.now().format(ISO_FORMATTER));
-            
+
             Map<String, Object> netatmoData = new HashMap<>();
             netatmoData.put("outdoorTemperature", data.outdoorTemperature);
             netatmoData.put("indoorTemperature", data.indoorTemperature);
@@ -75,16 +138,16 @@ public class ApiController {
             netatmoData.put("pressure", data.pressure);
             netatmoData.put("co2", data.co2);
             netatmoData.put("noise", data.noise);
-            
+
             response.put("data", netatmoData);
-            
+
             log.debug("Successfully retrieved Netatmo data for user: {}", navn);
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             log.error("Failed to fetch Netatmo data for user: {}", navn, e);
             return ResponseEntity.internalServerError()
-                .body(createErrorResponse(navn, "Failed to retrieve Netatmo data", e.getMessage()));
+                    .body(createErrorResponse(navn, "Failed to retrieve Netatmo data", e.getMessage()));
         }
     }
 
@@ -97,20 +160,20 @@ public class ApiController {
     @GetMapping("/{navn}/weather")
     public ResponseEntity<Map<String, Object>> getWeatherData(@PathVariable String navn) {
         log.info("Fetching weather data for user: {}", navn);
-        
+
         try {
             WeatherData weatherData = weatherService.getWeatherReport(navn);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("navn", navn);
             response.put("timestamp", LocalDateTime.now().format(ISO_FORMATTER));
-            
+
             // Current weather (main)
             Map<String, Object> current = new HashMap<>();
             if (weatherData.main != null) {
                 current.put("date", weatherData.main.date != null ? weatherData.main.date.toString() : null);
                 current.put("fromToday", weatherData.mainFromToday);
-                
+
                 // Get the most relevant period for current weather
                 if (weatherData.main.day != null) {
                     current.put("temperature", weatherData.main.day.temperature);
@@ -131,22 +194,22 @@ public class ApiController {
                 }
             }
             response.put("current", current);
-            
+
             // Forecast
             var forecast = weatherData.longtimeForecast.stream()
-                .limit(5) // Limit to 5 days for React frontend
-                .map(this::mapWeatherDayToJson)
-                .toList();
-            
+                    .limit(5) // Limit to 5 days for React frontend
+                    .map(this::mapWeatherDayToJson)
+                    .toList();
+
             response.put("forecast", forecast);
-            
+
             log.debug("Successfully retrieved weather data for user: {}", navn);
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             log.error("Failed to fetch weather data for user: {}", navn, e);
             return ResponseEntity.internalServerError()
-                .body(createErrorResponse(navn, "Failed to retrieve weather data", e.getMessage()));
+                    .body(createErrorResponse(navn, "Failed to retrieve weather data", e.getMessage()));
         }
     }
 
@@ -159,7 +222,7 @@ public class ApiController {
     private Map<String, Object> mapWeatherDayToJson(WeatherDataDay weatherDay) {
         Map<String, Object> dayData = new HashMap<>();
         dayData.put("date", weatherDay.date != null ? weatherDay.date.toString() : null);
-        
+
         Map<String, Object> periods = new HashMap<>();
         if (weatherDay.night != null) {
             periods.put("night", mapPeriodToJson(weatherDay.night));
@@ -173,7 +236,7 @@ public class ApiController {
         if (weatherDay.evening != null) {
             periods.put("evening", mapPeriodToJson(weatherDay.evening));
         }
-        
+
         dayData.put("periods", periods);
         return dayData;
     }
@@ -201,29 +264,29 @@ public class ApiController {
     @GetMapping("/{navn}/calendar")
     public ResponseEntity<Map<String, Object>> getCalendarEvents(@PathVariable String navn) {
         log.info("Fetching calendar events for user: {}", navn);
-        
+
         try {
             var calendarEvents = calendarService.getCalendarEvents(navn);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("navn", navn);
             response.put("timestamp", LocalDateTime.now().format(ISO_FORMATTER));
-            
+
             // Convert calendar events to JSON-friendly format
             var events = calendarEvents.stream()
-                .map(this::mapCalendarEventToJson)
-                .toList();
-            
+                    .map(this::mapCalendarEventToJson)
+                    .toList();
+
             response.put("events", events);
             response.put("eventCount", events.size());
-            
+
             log.debug("Successfully retrieved {} calendar events for user: {}", events.size(), navn);
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             log.error("Failed to fetch calendar events for user: {}", navn, e);
             return ResponseEntity.internalServerError()
-                .body(createErrorResponse(navn, "Failed to retrieve calendar events", e.getMessage()));
+                    .body(createErrorResponse(navn, "Failed to retrieve calendar events", e.getMessage()));
         }
     }
 
@@ -238,23 +301,23 @@ public class ApiController {
         eventData.put("title", event.title);
         eventData.put("start", event.eventStart != null ? event.eventStart.format(ISO_FORMATTER) : null);
         eventData.put("end", event.eventEnd != null ? event.eventEnd.format(ISO_FORMATTER) : null);
-        
+
         // Include the formatted Norwegian date display for backwards compatibility
         eventData.put("displayDate", event.printDato());
         eventData.put("displayText", event.print());
-        
+
         // Add some helper flags for React frontend
-        eventData.put("allDay", event.eventStart != null && event.eventEnd != null && 
-                                event.eventStart.toLocalTime().equals(java.time.LocalTime.MIDNIGHT) &&
-                                event.eventEnd.toLocalTime().equals(java.time.LocalTime.MIDNIGHT));
-        
+        eventData.put("allDay", event.eventStart != null && event.eventEnd != null &&
+                event.eventStart.toLocalTime().equals(java.time.LocalTime.MIDNIGHT) &&
+                event.eventEnd.toLocalTime().equals(java.time.LocalTime.MIDNIGHT));
+
         return eventData;
     }
 
     /**
      * Creates a standardized error response structure.
      * 
-     * @param navn User identifier
+     * @param navn    User identifier
      * @param message Error message
      * @param details Detailed error information
      * @return Error response map

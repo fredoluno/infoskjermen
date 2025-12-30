@@ -1,6 +1,5 @@
 package no.infoskjermen.tjenester;
 
-
 import com.google.cloud.firestore.GeoPoint;
 import no.infoskjermen.Settings;
 import no.infoskjermen.data.Cache;
@@ -32,19 +31,15 @@ import java.util.TreeSet;
 public class WeatherService implements PopulateInterface {
     private Logger log = LoggerFactory.getLogger(WeatherService.class);
 
-
     private Settings settings;
     private final long expireTime = 60 * 60 * 1000;
     private static final String CLIENT_NAME = "fredoluno@gmail.com - Infoskjermen";
     private static final String URL = "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=%s&lon=%s";
 
-
     private static HashMap<String, String> WEATHER_SYMBOL_CONVERSION;
 
-
     // Instantiating the static map
-    static
-    {
+    static {
         WEATHER_SYMBOL_CONVERSION = new HashMap<>();
         WEATHER_SYMBOL_CONVERSION.put("clearsky", "1");
         WEATHER_SYMBOL_CONVERSION.put("fair", "2");
@@ -90,64 +85,57 @@ public class WeatherService implements PopulateInterface {
 
     }
 
-
-
     private Cache weatherReports;
-
-
-
 
     public WeatherService(Settings settings) {
         this.settings = settings;
         weatherReports = new Cache();
 
-
     }
-    public String getURL(GeoPoint location){
+
+    public String getURL(GeoPoint location) {
 
         return URL.formatted("" + location.getLatitude(), "" + location.getLongitude());
     }
 
-    public WeatherData getWeatherReport(String navn) throws  Exception {
+    public WeatherData getWeatherReport(String navn) throws Exception {
 
         boolean varselFraIdag = true;
         boolean legacy = false;
         HashMap personalSettings = settings.getYrSettings(navn);
-        GeoPoint location =  personalSettings!=null ? (GeoPoint)personalSettings.get("location"):null;
+        GeoPoint location = personalSettings != null ? (GeoPoint) personalSettings.get("location") : null;
         String url;
         if (location == null) {
             legacy = true;
-            url = personalSettings!=null && personalSettings.get("url")!=null?(String) personalSettings.get("url"):"";
-        }else{
+            url = personalSettings != null && personalSettings.get("url") != null ? (String) personalSettings.get("url")
+                    : "";
+        } else {
             url = getURL(location);
         }
 
-        WeatherData returnData = (WeatherData)weatherReports.get(url);
-        if(returnData != null) {
+        WeatherData returnData = (WeatherData) weatherReports.get(url);
+        if (returnData != null) {
             log.debug("found in Cache");
             return returnData;
         }
         log.debug("didn't find it in cache. Going to get it");
         WeatherData weatherData = null;
 
-        if(legacy){
+        if (legacy) {
             weatherData = getWeatherData(url);
-        }
-        else {
+        } else {
             weatherData = getWeatherFromYrNew(url);
         }
 
-
-        weatherReports.add(url,weatherData,expireTime);
+        weatherReports.add(url, weatherData, expireTime);
         return weatherData;
     }
-
-
 
     private WeatherData getWeatherData(String url) throws Exception {
         WeatherData weatherData = new WeatherData();
         Document doc = getWeatherFromYr(url);
-        if(doc==null) return weatherData;
+        if (doc == null)
+            return weatherData;
 
         Node tabular = doc.getElementsByTagName("tabular").item(0);
 
@@ -158,14 +146,14 @@ public class WeatherService implements PopulateInterface {
         NodeList nodeList = tabular.getChildNodes();
         log.debug("nodeList.getLength()=" + nodeList.getLength());
         WeatherDataDay weatherDay = new WeatherDataDay();
-        for (int i = 0; i < nodeList.getLength(); i++){
-            Node node = nodeList.item(i)  ;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
                 WeatherDataPeriod data = getWeatherDataPeriod(element);
                 weatherDay.date = data.date;
                 if (foersteElement && Integer.parseInt(data.period) > dagPeriode) {
-                    //det er da kveld og vi henter heller morgendagens varsel.
+                    // det er da kveld og vi henter heller morgendagens varsel.
                     foersteElement = false;
                     weatherData.mainFromToday = false;
                     continue;
@@ -177,11 +165,11 @@ public class WeatherService implements PopulateInterface {
 
                 if (data.period.equals("3")) {
                     weatherDay.evening = data;
-                    if (!hovedFerdig){
+                    if (!hovedFerdig) {
                         log.debug("hovedvarsel");
                         weatherData.main = weatherDay;
                         hovedFerdig = true;
-                    }else{
+                    } else {
                         log.debug("langtidsvarsel");
                         weatherData.longtimeForecast.add(weatherDay);
                     }
@@ -195,17 +183,18 @@ public class WeatherService implements PopulateInterface {
     private WeatherDataPeriod getWeatherDataPeriod(Element element) {
         WeatherDataPeriod data = new WeatherDataPeriod();
         data.symbol = ((Element) element.getElementsByTagName("symbol").item(0)).getAttribute("number");
-        data.temperature = Integer.parseInt(((Element) element.getElementsByTagName("temperature").item(0)).getAttribute("value"));
+        data.temperature = Integer
+                .parseInt(((Element) element.getElementsByTagName("temperature").item(0)).getAttribute("value"));
         data.date = DateTimeUtils.getDateFromYr(element.getAttribute("from"));
         data.period = element.getAttribute("period");
-        log.debug( data.debug());
+        log.debug(data.debug());
         return data;
     }
 
-
-    private Document getWeatherFromYr(String url) throws Exception{
-        if(url== null || url.equals("")) return null;
-        log.debug("getWeatherFromYr for " + url );
+    private Document getWeatherFromYr(String url) throws Exception {
+        if (url == null || url.equals(""))
+            return null;
+        log.debug("getWeatherFromYr for " + url);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(url);
@@ -215,11 +204,13 @@ public class WeatherService implements PopulateInterface {
         return doc;
     }
 
-    public WeatherData getWeatherFromYrNew(String url){
+    public WeatherData getWeatherFromYrNew(String url) {
         log.debug("URL" + url);
 
         RestTemplate restTemplate = new RestTemplate();
-        //HashMap map = restTemplate.postForObject((String) generalSettings.get("endpoint"), getHttpEntity(personalSettings), HashMap.class);
+        // HashMap map = restTemplate.postForObject((String)
+        // generalSettings.get("endpoint"), getHttpEntity(personalSettings),
+        // HashMap.class);
         ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.GET, requestYr(), HashMap.class, 1);
 
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -234,7 +225,6 @@ public class WeatherService implements PopulateInterface {
 
     }
 
-
     private HttpEntity requestYr() {
         HttpHeaders headers = new HttpHeaders();
 
@@ -245,7 +235,7 @@ public class WeatherService implements PopulateInterface {
         return request;
     }
 
-    private WeatherData convertNewYRtoKemKaKorr(HashMap yr){
+    private WeatherData convertNewYRtoKemKaKorr(HashMap yr) {
         WeatherData weatherData = new WeatherData();
         WeatherDataDay weatherDay = new WeatherDataDay();
         boolean foersteElement = true;
@@ -253,24 +243,24 @@ public class WeatherService implements PopulateInterface {
         final int dagPeriode = 2;
 
         String test = "";
-        List timeslots = (List)((HashMap)yr.get("properties")).get("timeseries");
+        List timeslots = (List) ((HashMap) yr.get("properties")).get("timeseries");
 
-        for (Object timeslot: timeslots) {
-            LocalDateTime date = DateTimeUtils.getYrDateTime((String)((HashMap)timeslot).get("time"));
-            int period =  getPeriod(date);
-            if(period >= 0 ){
-                WeatherDataPeriod data = getWeatherDataPeriodNew((HashMap)timeslot);
+        for (Object timeslot : timeslots) {
+            LocalDateTime date = DateTimeUtils.getYrDateTime((String) ((HashMap) timeslot).get("time"));
+            int period = getPeriod(date);
+            if (period >= 0) {
+                WeatherDataPeriod data = getWeatherDataPeriodNew((HashMap) timeslot);
                 log.debug(data.debug());
 
                 if (foersteElement && period > dagPeriode) {
-                    //det er da kveld og vi henter heller morgendagens varsel.
+                    // det er da kveld og vi henter heller morgendagens varsel.
                     foersteElement = false;
                     weatherData.mainFromToday = false;
                     continue;
 
                 }
-                if(foersteElement && !DateTimeUtils.erIdag(date)){
-                    weatherData.mainFromToday=false;
+                if (foersteElement && !DateTimeUtils.erIdag(date)) {
+                    weatherData.mainFromToday = false;
                 }
                 foersteElement = false;
 
@@ -278,11 +268,11 @@ public class WeatherService implements PopulateInterface {
 
                 if (data.period.equals("3")) {
                     weatherDay.evening = data;
-                    if (!hovedFerdig){
+                    if (!hovedFerdig) {
                         log.debug("hovedvarsel");
                         weatherData.main = weatherDay;
                         hovedFerdig = true;
-                    }else{
+                    } else {
                         log.debug("langtidsvarsel");
                         weatherData.longtimeForecast.add(weatherDay);
                     }
@@ -299,41 +289,60 @@ public class WeatherService implements PopulateInterface {
 
     }
 
-    private  WeatherDataPeriod getWeatherDataPeriodNew(HashMap timeslot){
+    private WeatherDataPeriod getWeatherDataPeriodNew(HashMap timeslot) {
         WeatherDataPeriod wd = new WeatherDataPeriod();
-        LocalDateTime date = DateTimeUtils.getYrDateTime((String)timeslot.get("time"));
+        LocalDateTime date = DateTimeUtils.getYrDateTime((String) timeslot.get("time"));
         wd.period = "" + getPeriod(date);
-        wd.date  = date.toLocalDate();
-        wd.symbol = getSymbol((HashMap)timeslot.get("data"));
-        wd.temperature = getTemperature((HashMap)timeslot.get("data"));
+        wd.date = date.toLocalDate();
+        wd.symbol = getSymbol((HashMap) timeslot.get("data"));
+        wd.temperature = getTemperature((HashMap) timeslot.get("data"));
+        wd.windSpeed = getWindSpeed((HashMap) timeslot.get("data"));
+        wd.windDirection = getWindDirection((HashMap) timeslot.get("data"));
         return wd;
 
     }
-    private int getTemperature(HashMap timeslot){
-        HashMap instant = (HashMap)timeslot.get("instant");
-        HashMap details = (HashMap)instant.get("details");
-        Double air_temperature = (Double)details.get("air_temperature") ;
+
+    private int getTemperature(HashMap timeslot) {
+        HashMap instant = (HashMap) timeslot.get("instant");
+        HashMap details = (HashMap) instant.get("details");
+        Double air_temperature = (Double) details.get("air_temperature");
 
         return air_temperature.intValue();
 
     }
 
-    private String getSymbol(HashMap timeslot){
-            HashMap next = (HashMap)timeslot.get("next_6_hours");
-            if(next== null) {
-                return null;
-            }
-            HashMap summary = (HashMap)next.get("summary");
-            String symbol_code = (String)summary.get("symbol_code");
-            //fjerner night day osv
-            symbol_code= symbol_code.split("_")[0];
+    private Double getWindSpeed(HashMap data) {
+        HashMap instant = (HashMap) data.get("instant");
+        HashMap details = (HashMap) instant.get("details");
+        return (Double) details.get("wind_speed");
+    }
+
+    private String getWindDirection(HashMap data) {
+        HashMap instant = (HashMap) data.get("instant");
+        HashMap details = (HashMap) instant.get("details");
+        Double degrees = (Double) details.get("wind_from_direction");
+        if (degrees == null)
+            return "";
+
+        String[] directions = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+        return directions[(int) Math.round(((degrees % 360) / 45)) % 8];
+    }
+
+    private String getSymbol(HashMap timeslot) {
+        HashMap next = (HashMap) timeslot.get("next_6_hours");
+        if (next == null) {
+            return null;
+        }
+        HashMap summary = (HashMap) next.get("summary");
+        String symbol_code = (String) summary.get("symbol_code");
+        // fjerner night day osv
+        symbol_code = symbol_code.split("_")[0];
 
         return WEATHER_SYMBOL_CONVERSION.get(symbol_code);
     }
 
-
     private int getPeriod(LocalDateTime date) {
-        //log.debug(date.getHour() + " hour= " + date.getHour());
+        // log.debug(date.getHour() + " hour= " + date.getHour());
         int period = -1;
         switch (date.getHour()) {
             case 0:
@@ -348,42 +357,36 @@ public class WeatherService implements PopulateInterface {
             case 18:
                 period = 3;
         }
-        return  period;
+        return period;
     }
-
 
     @Override
     public String populate(String svg, String navn) {
-        if(!isPresentInSVG(svg)){
+        if (!isPresentInSVG(svg)) {
             log.debug("svg inneholder ikke vær");
             return svg;
         }
-        try{
+        try {
             WeatherData myWeatherData = this.getWeatherReport(navn);
-            String tittel = myWeatherData.mainFromToday? "Været i dag": "I morgen";
+            String tittel = myWeatherData.mainFromToday ? "Været i dag" : "I morgen";
             svg = svg.replaceAll("@@VARSETITTEL@@", tittel);
-            if(myWeatherData.main != null){
+            if (myWeatherData.main != null) {
 
-                svg = svg.replaceAll("@@VARSELDAG@@",   getTemperature(myWeatherData.main.day));
-                svg = svg.replaceAll("@@VARSELNATT@@",  getTemperature(myWeatherData.main.night));
-                svg = svg.replaceAll("@@VARSELMORGEN@@",getTemperature(myWeatherData.main.morning));
+                svg = svg.replaceAll("@@VARSELDAG@@", getTemperature(myWeatherData.main.day));
+                svg = svg.replaceAll("@@VARSELNATT@@", getTemperature(myWeatherData.main.night));
+                svg = svg.replaceAll("@@VARSELMORGEN@@", getTemperature(myWeatherData.main.morning));
                 svg = svg.replaceAll("@@VARSELKVELD@@", getTemperature(myWeatherData.main.evening));
 
-
-
-                svg = svg.replaceAll("@@SYMBOL@@","v" + getSymbol(myWeatherData.main.day));
-                svg = svg.replaceAll("@@VARSELNATTSYMBOL@@", "v" +  getSymbol(myWeatherData.main.night));
-                svg = svg.replaceAll("@@VARSELMORGENSYMBOL@@","v" + getSymbol(myWeatherData.main.morning));
-                svg = svg.replaceAll("@@VARSELKVELDSYMBOL@@","v" +  getSymbol(myWeatherData.main.evening));
+                svg = svg.replaceAll("@@SYMBOL@@", "v" + getSymbol(myWeatherData.main.day));
+                svg = svg.replaceAll("@@VARSELNATTSYMBOL@@", "v" + getSymbol(myWeatherData.main.night));
+                svg = svg.replaceAll("@@VARSELMORGENSYMBOL@@", "v" + getSymbol(myWeatherData.main.morning));
+                svg = svg.replaceAll("@@VARSELKVELDSYMBOL@@", "v" + getSymbol(myWeatherData.main.evening));
 
             }
 
             svg = populateLongTime(myWeatherData.longtimeForecast, svg);
 
-
-
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.error("Fikk ikke hentet Været " + e.getMessage());
             e.printStackTrace();
         }
@@ -392,27 +395,27 @@ public class WeatherService implements PopulateInterface {
     }
 
     private String populateLongTime(TreeSet<WeatherDataDay> longtimeForecast, String svg) {
-        if (longtimeForecast == null){
+        if (longtimeForecast == null) {
             return svg;
         }
         int i = 0;
-        for (WeatherDataDay myPeriod: longtimeForecast){
+        for (WeatherDataDay myPeriod : longtimeForecast) {
             log.debug(myPeriod.debug());
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".dag@@",   DateTimeUtils.getDay(myPeriod.date));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".temperatur@@",   getTemperature(myPeriod.night));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".symbol@@",   getSymbol(myPeriod.night));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".dag@@", DateTimeUtils.getDay(myPeriod.date));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".temperatur@@", getTemperature(myPeriod.night));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".symbol@@", getSymbol(myPeriod.night));
             i++;
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".dag@@",   DateTimeUtils.getDay(myPeriod.date));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".temperatur@@",   getTemperature(myPeriod.morning));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".symbol@@",   getSymbol(myPeriod.morning));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".dag@@", DateTimeUtils.getDay(myPeriod.date));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".temperatur@@", getTemperature(myPeriod.morning));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".symbol@@", getSymbol(myPeriod.morning));
             i++;
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".dag@@",   DateTimeUtils.getDay(myPeriod.date));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".temperatur@@",   getTemperature(myPeriod.day));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".symbol@@",   getSymbol(myPeriod.day));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".dag@@", DateTimeUtils.getDay(myPeriod.date));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".temperatur@@", getTemperature(myPeriod.day));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".symbol@@", getSymbol(myPeriod.day));
             i++;
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".dag@@",   DateTimeUtils.getDay(myPeriod.date));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".temperatur@@",   getTemperature(myPeriod.evening));
-            svg = svg.replaceAll("@@langtidsvarsel."+i+".symbol@@",   getSymbol(myPeriod.evening));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".dag@@", DateTimeUtils.getDay(myPeriod.date));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".temperatur@@", getTemperature(myPeriod.evening));
+            svg = svg.replaceAll("@@langtidsvarsel." + i + ".symbol@@", getSymbol(myPeriod.evening));
             i++;
 
         }
@@ -420,25 +423,15 @@ public class WeatherService implements PopulateInterface {
     }
 
     private String getTemperature(WeatherDataPeriod period) {
-        return period == null?"":""+period.temperature;
+        return period == null ? "" : "" + period.temperature;
     }
 
     private String getSymbol(WeatherDataPeriod period) {
-        return period == null || period.symbol == null?"":period.symbol;
+        return period == null || period.symbol == null ? "" : period.symbol;
     }
-
 
     @Override
     public boolean isPresentInSVG(String svg) {
-        return svg.contains("@@VARSEL")  || svg.contains("@@langtidsvarsel") ;
+        return svg.contains("@@VARSEL") || svg.contains("@@langtidsvarsel");
     }
 }
-
-
-
-
-
-
-
-
-
