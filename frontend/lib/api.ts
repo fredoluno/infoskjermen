@@ -6,7 +6,6 @@ const API_BASE_URL = 'http://localhost:8080/api/v1';
 export async function fetchSmartDisplayData(user: string): Promise<SmartDisplayData | null> {
     try {
         const res = await fetch(`${API_BASE_URL}/${user}/smart-display`, {
-            cache: 'no-store',
             next: { revalidate: 60 } // Revalidate every minute
         });
 

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { SmartDisplayData } from '@/lib/types';
 import { Cloud, Sun, Wind, Calendar, Info, Trash2 } from 'lucide-react';
+import WeatherIcon from 'react-weathericons';
 
 interface Props {
     data: SmartDisplayData;
@@ -24,6 +25,33 @@ export default function SmartDisplay({ data, mode }: Props) {
 
     const formatDate = (date: Date) => {
         return date.toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+    };
+
+    // Map YR.no weather symbols to weather icons
+    const getWeatherIcon = (symbol: string) => {
+        const symbolMap: { [key: string]: string } = {
+            '1': 'day-sunny', // clearsky
+            '2': 'day-sunny-overcast', // fair
+            '3': 'day-cloudy', // partlycloudy
+            '4': 'cloudy', // cloudy
+            '5': 'day-showers', // rainshowers
+            '6': 'day-thunderstorm', // rainshowersandthunder
+            '7': 'day-sleet', // sleetshowers
+            '8': 'day-snow', // snowshowers
+            '9': 'rain', // rain
+            '10': 'rain', // heavyrain
+            '11': 'thunderstorm', // heavyrainandthunder
+            '12': 'sleet', // sleet
+            '13': 'snow', // snow
+            '14': 'snow-thunderstorm', // snowandthunder
+            '15': 'fog', // fog
+            '20': 'day-sleet-storm', // sleetshowersandthunder
+            '21': 'day-snow-thunderstorm', // snowshowersandthunder
+            '22': 'day-thunderstorm', // rainandthunder
+            '23': 'day-sleet-storm', // sleetandthunder
+        };
+        
+        return symbolMap[symbol] || 'na'; // fallback to 'not available' icon
     };
 
     if (isGrayscale) {
@@ -51,10 +79,16 @@ export default function SmartDisplay({ data, mode }: Props) {
 
                     <section className="border-2 border-black p-4">
                         <h2 className="text-2xl font-bold border-b-2 border-black mb-2 flex items-center gap-2">
-                            <Sun className="w-6 h-6" /> VÆRET
+                            <WeatherIcon name="thermometer" size="1.5em" /> VÆRET
                         </h2>
-                        <div className="text-3xl">
-                            {data.weather.current?.temperature}°C {data.weather.current?.symbol}
+                        <div className="flex items-center gap-4">
+                            <WeatherIcon 
+                                name={getWeatherIcon(data.weather.current?.symbol || '')} 
+                                size="3em" 
+                            />
+                            <div className="text-3xl">
+                                {data.weather.current?.temperature}°C
+                            </div>
                         </div>
                     </section>
                 </main>
@@ -153,7 +187,7 @@ export default function SmartDisplay({ data, mode }: Props) {
                     {/* Module 2: Weather Forecast (Yr) */}
                     <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl flex-1">
                         <h2 className="flex items-center gap-2 text-xl font-bold mb-4 text-slate-200">
-                            <Cloud className="w-6 h-6 text-blue-300" /> Værmelding
+                            <WeatherIcon name="thermometer" size="1.5em" className="text-blue-300" /> Værmelding
                         </h2>
 
                         {/* Today's Forecast (Parts) */}
@@ -164,24 +198,44 @@ export default function SmartDisplay({ data, mode }: Props) {
                                     {data.weather.today.periods.morning && (
                                         <div className="bg-white/5 rounded-lg p-2">
                                             <div className="text-xs text-slate-400">Morgen</div>
+                                            <WeatherIcon 
+                                                name={getWeatherIcon(data.weather.today.periods.morning.symbol)} 
+                                                size="1.5em" 
+                                                className="mx-auto mb-1"
+                                            />
                                             <div className="font-bold">{data.weather.today.periods.morning.temperature}°</div>
                                         </div>
                                     )}
                                     {data.weather.today.periods.day && (
                                         <div className="bg-white/5 rounded-lg p-2">
                                             <div className="text-xs text-slate-400">Dag</div>
+                                            <WeatherIcon 
+                                                name={getWeatherIcon(data.weather.today.periods.day.symbol)} 
+                                                size="1.5em" 
+                                                className="mx-auto mb-1"
+                                            />
                                             <div className="font-bold">{data.weather.today.periods.day.temperature}°</div>
                                         </div>
                                     )}
                                     {data.weather.today.periods.evening && (
                                         <div className="bg-white/5 rounded-lg p-2">
                                             <div className="text-xs text-slate-400">Kveld</div>
+                                            <WeatherIcon 
+                                                name={getWeatherIcon(data.weather.today.periods.evening.symbol)} 
+                                                size="1.5em" 
+                                                className="mx-auto mb-1"
+                                            />
                                             <div className="font-bold">{data.weather.today.periods.evening.temperature}°</div>
                                         </div>
                                     )}
                                     {data.weather.today.periods.night && (
                                         <div className="bg-white/5 rounded-lg p-2">
                                             <div className="text-xs text-slate-400">Natt</div>
+                                            <WeatherIcon 
+                                                name={getWeatherIcon(data.weather.today.periods.night.symbol)} 
+                                                size="1.5em" 
+                                                className="mx-auto mb-1"
+                                            />
                                             <div className="font-bold">{data.weather.today.periods.night.temperature}°</div>
                                         </div>
                                     )}
@@ -194,9 +248,15 @@ export default function SmartDisplay({ data, mode }: Props) {
                             <div>
                                 <h3 className="text-sm text-slate-400 uppercase mb-2">I morgen ({data.weather.forecast[0].date})</h3>
                                 <div className="flex items-center justify-between bg-white/5 rounded-xl p-3">
-                                    <div className="flex gap-4">
+                                    <div className="flex items-center gap-4">
                                         {data.weather.forecast[0].periods.day ? (
-                                            <div className="text-2xl font-bold">{data.weather.forecast[0].periods.day.temperature}° <span className="text-sm font-normal text-slate-400">{data.weather.forecast[0].periods.day.symbol}</span></div>
+                                            <>
+                                                <WeatherIcon 
+                                                    name={getWeatherIcon(data.weather.forecast[0].periods.day.symbol)} 
+                                                    size="2em" 
+                                                />
+                                                <div className="text-2xl font-bold">{data.weather.forecast[0].periods.day.temperature}°</div>
+                                            </>
                                         ) : (
                                             <span className="text-slate-500">Ingen data</span>
                                         )}
